@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://getahead.org/dwr/dwr30.dtd">
+<dwr>
+    <allow>
+        <!--<convert match="org.sdgas.model.Department" converter="bean"/>-->
+        <!-- <convert match="org.sdgas.model.Sex" converter="enum"/>-->
+
+        <!--<create creator="spring" javascript="positionService">
+            &lt;!&ndash;  鐢眘pring绠＄悊鐨勪笟鍔＄被瀵硅薄  ***service   &ndash;&gt;
+            <param name="beanName" value="positionServiceImpl"/>
+            &lt;!&ndash;鎸囧畾鍙緵杩滅▼璋冪敤鐨勪互涓烘柟娉�&ndash;&gt;
+        </create>-->
+    </allow>
+</dwr>
