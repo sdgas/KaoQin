@@ -6,8 +6,10 @@ package org.sdgas.VO;
 public class UserInfoVO extends BaseVO {
 
     private String USERID;
-    private String NAME;
+    private String name;
     private String pwd;
+    private String pwd1;
+    private String depId;
 
     public String getUSERID() {
         return USERID;
@@ -17,12 +19,12 @@ public class UserInfoVO extends BaseVO {
         this.USERID = USERID;
     }
 
-    public String getNAME() {
-        return NAME;
+    public String getName() {
+        return name;
     }
 
-    public void setNAME(String NAME) {
-        this.NAME = NAME;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getPwd() {
@@ -31,5 +33,21 @@ public class UserInfoVO extends BaseVO {
 
     public void setPwd(String pwd) {
         this.pwd = pwd;
+    }
+
+    public String getPwd1() {
+        return pwd1;
+    }
+
+    public void setPwd1(String pwd1) {
+        this.pwd1 = pwd1;
+    }
+
+    public String getDepId() {
+        return depId;
+    }
+
+    public void setDepId(String depId) {
+        this.depId = depId;
     }
 }

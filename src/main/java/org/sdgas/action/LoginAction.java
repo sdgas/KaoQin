@@ -73,7 +73,7 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
         if (person != null) {
             logger.info("用户 " + person.getUserId() + "登出系统。IP:" + ip);
             session.removeAttribute("person");
-            //session.invalidate();
+            session.removeAttribute("ip");
         }
         view = "/login.jsp";
         return VIEW;
@@ -81,21 +81,21 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
 
 
     //修改密码
-    /*public String alterPwd() {
+    public String alterPwd() {
 
-        USERINFO user = userService.findById(userVO.getUserId());
+        Administrators user = administratorsService.findById(Integer.valueOf(userVO.getUSERID()));
         if (!user.getPwd().equals(userVO.getPwd())) {
             userVO.setResultMessage("<script>alert('原密码错误');location.href='/page/user/alterPwd.jsp';</script>");
-            logger.info(user.getPosition().getPositionName() + ":" + user.getUserName() + " 修改用户密码，原密码错误）操作IP：" + ip);
+            logger.info("用户:" + user.getUserId() + " 修改用户密码，原密码错误）操作IP：" + ip);
             return ERROR;
         } else {
-            user.setPwd(userVO.getPwd2());
-            userService.update(user);
+            user.setPwd(userVO.getPwd1());
+            administratorsService.update(user);
             userVO.setResultMessage("<script>alert('修改密码成功！请重新登录系统');location.href='login.jsp';</script>");
-            logger.info(user.getPosition().getPositionName() + ":" + user.getUserName() + " 修改用户密码成功。操作IP：" + ip);
+            logger.info("用户:" + user.getUserId() + " 修改用户密码成功。操作IP：" + ip);
             return SUCCESS;
         }
-    }*/
+    }
 
     @Override
     public UserInfoVO getModel() {

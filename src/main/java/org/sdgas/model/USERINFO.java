@@ -25,18 +25,18 @@ public class USERINFO {
     private String ZIP;
     private String OPHONE;
     private String FPHONE;
-    private int VERIFICATIONMETHOD;
+    private Short VERIFICATIONMETHOD;
     private int DEFAULTDEPTID;
-    private int ATT;
-    private int INLATE;
-    private int OUTEARLY;
-    private int OVERTIME;
-    private int SEP;
-    private int HOLIDAY;
+    private short ATT;
+    private short INLATE;
+    private short OUTEARLY;
+    private short OVERTIME;
+    private short SEP;
+    private short HOLIDAY;
     private String MINZU;
     private String LUNCHDURATION;
     private String MVerifyPass;
-    private Image PHOTO;
+    private byte[] PHOTO;
     private String PASSWORD;
 
     @Id
@@ -175,15 +175,15 @@ public class USERINFO {
         this.FPHONE = FPHONE;
     }
 
-    public int getVERIFICATIONMETHOD() {
+    public Short getVERIFICATIONMETHOD() {
         return VERIFICATIONMETHOD;
     }
 
-    public void setVERIFICATIONMETHOD(int VERIFICATIONMETHOD) {
+    public void setVERIFICATIONMETHOD(Short VERIFICATIONMETHOD) {
         this.VERIFICATIONMETHOD = VERIFICATIONMETHOD;
     }
 
-    @Column(columnDefinition = "INT default 1")
+    @Column(columnDefinition = "SMALLINT default 1")
     public int getDEFAULTDEPTID() {
         return DEFAULTDEPTID;
     }
@@ -192,57 +192,57 @@ public class USERINFO {
         this.DEFAULTDEPTID = DEFAULTDEPTID;
     }
 
-    @Column(columnDefinition = "INT default 1")
-    public int getATT() {
+    @Column(columnDefinition = "SMALLINT default 1")
+    public short getATT() {
         return ATT;
     }
 
-    public void setATT(int ATT) {
+    public void setATT(short ATT) {
         this.ATT = ATT;
     }
 
-    @Column(columnDefinition = "INT default 1")
-    public int getINLATE() {
+    @Column(columnDefinition = "SMALLINT default 1")
+    public short getINLATE() {
         return INLATE;
     }
 
-    public void setINLATE(int INLATE) {
+    public void setINLATE(short INLATE) {
         this.INLATE = INLATE;
     }
 
-    @Column(columnDefinition = "INT default 1")
-    public int getOUTEARLY() {
+    @Column(columnDefinition = "SMALLINT default 1")
+    public short getOUTEARLY() {
         return OUTEARLY;
     }
 
-    public void setOUTEARLY(int OUTEARLY) {
+    public void setOUTEARLY(short OUTEARLY) {
         this.OUTEARLY = OUTEARLY;
     }
 
-    @Column(columnDefinition = "INT default 1")
-    public int getOVERTIME() {
+    @Column(columnDefinition = "SMALLINT default 1")
+    public short getOVERTIME() {
         return OVERTIME;
     }
 
-    public void setOVERTIME(int OVERTIME) {
+    public void setOVERTIME(short OVERTIME) {
         this.OVERTIME = OVERTIME;
     }
 
-    @Column(columnDefinition = "INT default 1")
-    public int getSEP() {
+    @Column(columnDefinition = "SMALLINT default 1")
+    public short getSEP() {
         return SEP;
     }
 
-    public void setSEP(int SEP) {
+    public void setSEP(short SEP) {
         this.SEP = SEP;
     }
 
-    @Column(columnDefinition = "INT default 1")
-    public int getHOLIDAY() {
+    @Column(columnDefinition = "SMALLINT default 1")
+    public short getHOLIDAY() {
         return HOLIDAY;
     }
 
-    public void setHOLIDAY(int HOLIDAY) {
+    public void setHOLIDAY(short HOLIDAY) {
         this.HOLIDAY = HOLIDAY;
     }
 
@@ -280,5 +280,13 @@ public class USERINFO {
 
     public void setPASSWORD(String PASSWORD) {
         this.PASSWORD = PASSWORD;
+    }
+
+    public byte[] getPHOTO() {
+        return PHOTO;
+    }
+
+    public void setPHOTO(byte[] PHOTO) {
+        this.PHOTO = PHOTO;
     }
 }

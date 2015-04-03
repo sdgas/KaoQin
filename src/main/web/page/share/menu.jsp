@@ -26,7 +26,7 @@
         <c:if test="${session.person != null}">
             <%--<span style="font-family:'微软雅黑'; color: #000000; position: absolute;top: 3px;right: 18%;">欢迎 ${person.position.positionName}&nbsp&nbsp${person.userName}&nbsp--%>
 			<span style="font-family:'微软雅黑'; color: #000000;">欢迎
-				${person.position.positionName}&nbsp&nbsp${person.userName}&nbsp; <a
+				${person.userId}&nbsp; <a
                         href="<%=basePath%>page/user/alterPwd.jsp">修改密码</a> <a
                         href="Login!loginOut.action">退出</a>
 			</span>
@@ -42,7 +42,7 @@
         </button>
         <ul class="dropdown-menu" role="menu">
             <li>
-                <a href="<%=basePath%>page/user/addPerson.jsp">增加账号</a>
+                <a href="<%=basePath%>page/user/person.jsp">员工调岗</a>
             </li>
             <li class="divider"></li>
             <li>
@@ -54,23 +54,11 @@
     <div class="btn-group" style="margin-top: 10px;">
         <%--btn-primary 颜色--%>
         <button type="button" class="btn btn-default dropdown-toggle btn-primary" data-toggle="dropdown">
-            合同管理 <span class="caret"></span>
+            休假管理 <span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
             <li>
-                <a href="<%=basePath%>page/contract/addContract.jsp"> 新增合同 </a>
-            </li>
-            <li class="divider"></li>
-            <li>
-                <a href="Contract!findContract.action"> 维护合同信息 </a>
-            </li>
-            <li class="divider"></li>
-            <li>
-                <a href="#"> 续签合同 </a>
-            </li>
-            <li class="divider"></li>
-            <li>
-                <a href="#"> 改签合同 </a>
+                <a href="#"> 录入休假信息 </a>
             </li>
         </ul>
     </div>
@@ -78,11 +66,15 @@
     <%--按钮3--%>
     <div class="btn-group" style="margin-top: 10px;">
         <button type="button" class="btn btn-default dropdown-toggle btn-primary" data-toggle="dropdown">
-            相关制度<span class="caret"></span>
+            排班管理<span class="caret"></span>
         </button>
         <ul class="dropdown-menu" role="menu">
             <li>
-                <a href="<%=basePath%>page/policy/downloadList.jsp">相关制度下载</a>
+                <a href="#">每月排班</a>
+            </li>
+            <li class="divider"></li>
+            <li>
+                <a href="#">临时调班</a>
             </li>
         </ul>
     </div>
