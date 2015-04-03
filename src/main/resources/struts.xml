@@ -27,8 +27,8 @@
 		<!-- 默认action参考，就是当配置里的action都对应不上的时候，最后就会执行这个 -->
 		<!--<default-action-ref name="index"/> -->
 		<action name="*" class="org.sdgas.action.{1}Action">
-			<result name="success">/</result>
-			<result name="error">/</result>
+			<result name="success">/page/message/message.jsp</result>
+			<result name="error">/page/message/message.jsp</result>
 			<!-- 以下是自定义的结果，view是返回指定视图，action是跳转到指定action -->
 			<result name="view">${view}</result>
 			<result name="action">${action}</result>

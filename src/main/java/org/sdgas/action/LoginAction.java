@@ -26,7 +26,7 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
     private UserInfoVO userVO = new UserInfoVO();
     private AdministratorsService administratorsService;
 
-    private static String ip = "";
+    private static String ip = SystemHelper.getIpAddress();
 
     private static final Logger logger = LogManager.getLogger(LoginAction.class);
 
@@ -60,7 +60,7 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
             logger.trace(obj.toString());
             return VIEW;
         }
-        logger.info("用户：" + user.getUserId() + "登录密码错误！");
+        logger.info("用户 " + user.getUserId() + "登录密码错误. IP:" + ip);
         logger.exit(user.getUserId());
         userVO.setResultMessage("<script>alert('密码错误！');location.href='login.jsp';</script>");
         return ERROR;
@@ -69,9 +69,9 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
     //退出登录
     public String loginOut() throws Exception {
         HttpSession session = ServletActionContext.getRequest().getSession();
-        USERINFO person = (USERINFO) session.getAttribute("person");
+        Administrators person = (Administrators) session.getAttribute("person");
         if (person != null) {
-            logger.info("用户：" + person.getNAME() + "，登出系统");
+            logger.info("用户 " + person.getUserId() + "登出系统。IP:" + ip);
             session.removeAttribute("person");
             //session.invalidate();
         }
@@ -111,7 +111,6 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
     private void storePersonToSession(Administrators target) {
         HttpSession session = ServletActionContext.getRequest().getSession();
         Administrators storedPerson = (Administrators) session.getAttribute("person");
-        ip = SystemHelper.getIpAddress();
         if (!ip.trim().equals("") && (storedPerson == null || !storedPerson.equals(target))) {
             session.setAttribute("person", target);
             session.setAttribute("ip", ip);

@@ -47,7 +47,7 @@
         <div class="login_bar">
             <form id="ffLogin" action="Login.action" method="post">
                 <div class="i">
-                    <input id="userId" class="ipt usr_name" name="userId" type="text"
+                    <input id="userId" class="ipt usr_name" name="USERID" type="text"
                            maxlength="10" onkeydown="loginidclick(this);">
                 </div>
                 <div class="i">
