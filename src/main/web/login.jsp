@@ -26,7 +26,7 @@
 
     <script type="text/javascript" src="js/jquery.min.js"></script>
     <script type="text/javascript"
-            src="<%=basePath%>js/jquery.carouFredSel-6.2.1.js"></script>
+            src="<%=basePath%>js/jQuery.carouFredSel-6.2.1.js"></script>
     <script type="text/javascript" src="<%=basePath%>js/login.js"></script>
 
 </head>
@@ -48,11 +48,11 @@
             <form id="ffLogin" action="Login.action" method="post">
                 <div class="i">
                     <input id="userId" class="ipt usr_name" name="USERID" type="text"
-                           maxlength="10" onkeydown="loginidclick(this);">
+                           maxlength="10" onkeydown="loginidclick(this);" style="height: 30px">
                 </div>
                 <div class="i">
                     <input id="password" class="ipt usr_pwd" name="pwd"
-                           type="password" maxlength="22" onkeydown="loginpassclick(this);">
+                           type="password" maxlength="22" onkeydown="loginpassclick(this);" style="height: 30px">
                 </div>
                 <div class="i">
                     <div id="divMsg" style="color: red;"></div>

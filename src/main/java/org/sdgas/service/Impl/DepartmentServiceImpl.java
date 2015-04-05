@@ -20,4 +20,9 @@ public class DepartmentServiceImpl extends DaoSupport<DEPARTMENTS> implements De
     public List<DEPARTMENTS> findAll() {
         return this.find(DEPARTMENTS.class);
     }
+
+    @Override
+    public DEPARTMENTS findByID(int depId) {
+        return this.find(DEPARTMENTS.class, depId);
+    }
 }

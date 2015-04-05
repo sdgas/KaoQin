@@ -21,6 +21,7 @@
 	<constant name="struts.custom.i18n.resources" value="ApplicationResources">
 	</constant>
 
+	<include file="struts/struts4ajax.xml" />
 	<include file="struts/struts4download.xml" />
 
 	<package name="kaoqin" extends="struts-default">

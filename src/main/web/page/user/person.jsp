@@ -53,16 +53,15 @@
         }
 
         function getUser() {
-            var userId = $('#userId')[0].value;
             $.ajax({
                 type: 'POST',
-                url: "UserInfo!userNameGet.action",
+                url: "userInfoAjax.action",
                 data: {
-                    user: userId
+                    userId: $("#userId").val()
                 },
                 dataType: 'json',
                 success: function (data) {
-                    alert(data);
+                    $("#userName").val(data.userNames[0]);
                 }
             });
         }
@@ -72,7 +71,7 @@
 <body>
 <%@ include file="/page/share/menu.jsp" %>
 <div id="content">
-    <form action="Login!addUser.action" method="post">
+    <form action="UserInfo.action" method="post">
         <table>
             <tr>
                 <td colspan="2" align="center">
@@ -85,12 +84,12 @@
             </tr>
             <tr>
                 <td>员工姓名:</td>
-                <td><input type="text" name="name" id="userName" value=""></td>
+                <td><input type="text" name="name" id="userName" readonly="readonly"></td>
             </tr>
             <tr>
                 <td>调岗部门：</td>
                 <td>
-                    <select name="department" id="dep" style="font-family: '微软雅黑';font-size: 16px;"></select>
+                    <select name="depId" id="dep" style="font-family: '微软雅黑';font-size: 16px;"></select>
                 </td>
             </tr>
             <tr>
