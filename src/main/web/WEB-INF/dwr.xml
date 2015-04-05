@@ -3,9 +3,14 @@
 <dwr>
     <allow>
         <convert match="org.sdgas.model.DEPARTMENTS" converter="bean"/>
+        <convert match="org.sdgas.model.Vacation" converter="bean"/>
 
         <create creator="spring" javascript="departmentService">
             <param name="beanName" value="departmentServiceImpl"/>
+        </create>
+
+        <create creator="spring" javascript="vacationService">
+            <param name="beanName" value="vacationServiceImpl"/>
         </create>
 
     </allow>

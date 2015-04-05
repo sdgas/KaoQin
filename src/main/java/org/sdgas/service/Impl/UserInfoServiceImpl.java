@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,5 +31,12 @@ public class UserInfoServiceImpl extends DaoSupport<USERINFO> implements UserInf
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("BADGENUMBER", userId);
         return (USERINFO) this.findSpecialObject(USERINFO.class, params);
+    }
+
+    @Override
+    public List<USERINFO> findByDep(int depId) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("DEFAULTDEPTID", depId);
+        return this.findByFields(USERINFO.class,params);
     }
 }

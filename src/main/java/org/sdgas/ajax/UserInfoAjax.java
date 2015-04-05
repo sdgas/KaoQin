@@ -22,14 +22,21 @@ public class UserInfoAjax extends ActionSupport {
 
     private UserInfoService userInfoService;
 
-    private List<String> userNames = new ArrayList<String>();
+    private String userNames;
+    private List<USERINFO> userinfos;
 
     private String userId;
+    private String dep;
 
     @Override
     public String execute() throws IOException {
         USERINFO userinfo = userInfoService.findById(userId);
-        userNames.add(userinfo.getNAME());
+        userNames = userinfo.getNAME();
+        return SUCCESS;
+    }
+
+    public String getUserInfo() {
+        userinfos = userInfoService.findByDep(Integer.valueOf(dep));
         return SUCCESS;
     }
 
@@ -38,11 +45,19 @@ public class UserInfoAjax extends ActionSupport {
         this.userInfoService = userInfoService;
     }
 
-    public List<String> getUserNames() {
+    public String getUserNames() {
         return userNames;
     }
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public void setDep(String dep) {
+        this.dep = dep;
+    }
+
+    public List<USERINFO> getUserinfos() {
+        return userinfos;
     }
 }

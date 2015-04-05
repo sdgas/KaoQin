@@ -26,6 +26,11 @@ public class Administrators {
      */
     private int type;
 
+    /**
+     * 管理员所在部门
+     */
+    private int depId;
+
     @Id
     public int getUserId() {
         return userId;
@@ -50,5 +55,13 @@ public class Administrators {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public int getDepId() {
+        return depId;
+    }
+
+    public void setDepId(int depId) {
+        this.depId = depId;
     }
 }

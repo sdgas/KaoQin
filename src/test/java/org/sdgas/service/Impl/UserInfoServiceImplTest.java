@@ -8,6 +8,8 @@ import org.sdgas.service.UserInfoService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -40,5 +42,11 @@ public class UserInfoServiceImplTest {
     public void testFindById() {
         userinfo = userInfoService.findById("20378");
         Assert.assertEquals("何斌", userinfo.getNAME());
+    }
+
+    @Test
+    public void testFindByDep(){
+        List<USERINFO> userinfos = userInfoService.findByDep(2);
+        Assert.assertEquals(0, userinfos.size());
     }
 }

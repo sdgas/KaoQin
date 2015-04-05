@@ -58,12 +58,28 @@
         </button>
         <ul class="dropdown-menu" role="menu">
             <li>
-                <a href="#"> 录入休假信息 </a>
+                <a href="<%=basePath%>page/leave/apply.jsp"> 录入休假信息 </a>
+            </li>
+            <li class="divider"></li>
+            <li>
+                <a href="<%=basePath%>page/holiday/DataOperation.jsp"> 上传年度节假日信息 </a>
+            </li>
+        </ul>
+    </div>
+    <%--按钮3--%>
+    <div class="btn-group" style="margin-top: 10px;">
+        <%--btn-primary 颜色--%>
+        <button type="button" class="btn btn-default dropdown-toggle btn-primary" data-toggle="dropdown">
+            加班管理 <span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li>
+                <a href="#"> 录入加班信息 </a>
             </li>
         </ul>
     </div>
 
-    <%--按钮3--%>
+    <%--按钮4--%>
     <div class="btn-group" style="margin-top: 10px;">
         <button type="button" class="btn btn-default dropdown-toggle btn-primary" data-toggle="dropdown">
             排班管理<span class="caret"></span>

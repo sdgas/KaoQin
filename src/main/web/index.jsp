@@ -18,7 +18,7 @@
 <html>
 <head>
     <base href="<%=basePath%>">
-    <title>Purchasing</title>
+    <title>考勤管理</title>
     <meta http-equiv="pragma" content="no-cache">
     <meta http-equiv="cache-control" content="no-cache">
     <meta http-equiv="content－Type" content="text/html;charset=UTF-8">

@@ -1,9 +1,7 @@
 package org.sdgas.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by 120378 on 2015-04-02.
@@ -20,13 +18,24 @@ public class VacationInfo {
      * 员工信息
      */
     private int userinfo;
-
+    /**
+     * 休假类型
+     */
+    private int vacationId;
+    /**
+     * 开始时间
+     */
+    private Date beginDate;
+    /**
+     * 结束时间
+     */
+    private Date endDate;
     /**
      * 休假时长
      */
     private double longTime;
     /**
-     * 休假原因
+     * 标记
      */
     private String remarks;
 
@@ -65,5 +74,31 @@ public class VacationInfo {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    @Temporal(TemporalType.DATE)
+    public Date getBeginDate() {
+        return beginDate;
+    }
+
+    public void setBeginDate(Date beginDate) {
+        this.beginDate = beginDate;
+    }
+
+    @Temporal(TemporalType.DATE)
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public int getVacationId() {
+        return vacationId;
+    }
+
+    public void setVacationId(int vacationId) {
+        this.vacationId = vacationId;
     }
 }
