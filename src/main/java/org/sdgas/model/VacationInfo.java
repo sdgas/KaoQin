@@ -21,7 +21,7 @@ public class VacationInfo {
     /**
      * 休假类型
      */
-    private int vacationId;
+    private String vacationSymbol;
     /**
      * 开始时间
      */
@@ -94,11 +94,12 @@ public class VacationInfo {
         this.endDate = endDate;
     }
 
-    public int getVacationId() {
-        return vacationId;
+    @Column(length = 10)
+    public String getVacationSymbol() {
+        return vacationSymbol;
     }
 
-    public void setVacationId(int vacationId) {
-        this.vacationId = vacationId;
+    public void setVacationSymbol(String vacationSymbol) {
+        this.vacationSymbol = vacationSymbol;
     }
 }

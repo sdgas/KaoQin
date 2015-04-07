@@ -71,7 +71,7 @@
                     + '---------请选择---------' + '</option>';
             for (var i = 0; i < vacations.length; i++) {
                 select_list += '<option style="text-align: center" value="'
-                + vacations[i].id + '">'
+                + vacations[i].symbol + '">'
                 + vacations[i].vacation + "</option>";
             }
             $("#va").html(select_list);

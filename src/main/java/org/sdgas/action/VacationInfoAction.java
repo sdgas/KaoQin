@@ -39,11 +39,13 @@ public class VacationInfoAction extends MyActionSupport implements ModelDriven<V
         vacationInfo.setBeginDate(ChangeTime.parseStringToShortDate(vacationInfoVO.getBegin()));
         vacationInfo.setEndDate(ChangeTime.parseStringToShortDate(vacationInfoVO.getEnd()));
         vacationInfo.setLongTime(Double.valueOf(vacationInfoVO.getLongTime()));
-        vacationInfo.setVacationId(Integer.valueOf(vacationInfoVO.getVacationId()));
+        vacationInfo.setVacationSymbol(vacationInfoVO.getVacationId());
         String tep = vacationInfoVO.getBegin() + "," + vacationInfoVO.getRemarks()
                 + ";" + vacationInfoVO.getEnd() + "," + vacationInfoVO.getRemarks2();
         vacationInfo.setRemarks(tep);
         vacationInfoService.save(vacationInfo);
+        logger.info("管理员：" + user.getUserId() + " 添加了一条休假记录(" + vacationInfo.getId() + ")。IP:" + ip);
+        vacationInfoVO.setResultMessage("<script>alert('添加成功！');location.href='/page/leave/apply.jsp';</script>");
         return SUCCESS;
     }
 

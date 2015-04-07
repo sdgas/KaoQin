@@ -1,9 +1,7 @@
 package org.sdgas.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * Created by 120378 on 2015-04-02.
@@ -19,6 +17,16 @@ public class Overtime {
      * 员工信息
      */
     private int userinfo;
+
+    /**
+     * 加班开始时间
+     */
+    private Date beginTime;
+
+    /**
+     * 加班结束时间
+     */
+    private Date endTime;
 
     /**
      * 加班时长
@@ -64,5 +72,23 @@ public class Overtime {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getBeginTime() {
+        return beginTime;
+    }
+
+    public void setBeginTime(Date beginTime) {
+        this.beginTime = beginTime;
+    }
+
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Date endTime) {
+        this.endTime = endTime;
     }
 }

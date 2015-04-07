@@ -27,6 +27,16 @@ public class Period {
      */
     private String symbol;
 
+    /**
+     * 所属部门
+     */
+    private int depId;
+
+    /**
+     * 备注
+     */
+    private String remark;
+
     @Id
     @GeneratedValue
     public int getId() {
@@ -37,20 +47,39 @@ public class Period {
         this.id = id;
     }
 
+    @Column(nullable = false)
     public String getPeriod() {
         return period;
     }
 
-    @Column(unique = true)
     public void setPeriod(String period) {
         this.period = period;
     }
 
+    @Column(nullable = false)
     public String getSymbol() {
         return symbol;
     }
 
     public void setSymbol(String symbol) {
         this.symbol = symbol;
+    }
+
+    @Column(nullable = false)
+    public int getDepId() {
+        return depId;
+    }
+
+    public void setDepId(int depId) {
+        this.depId = depId;
+    }
+
+    @Column(length = 50)
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 }

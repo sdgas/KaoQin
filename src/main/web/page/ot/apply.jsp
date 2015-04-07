@@ -125,7 +125,7 @@
 <body>
 <%@ include file="/page/share/menu.jsp" %>
 <div id="content">
-    <form action="VacationInfo.action" method="post">
+    <form action="OverTime.action" method="post">
         <table>
             <tr>
                 <td colspan="2" align="center">
@@ -143,17 +143,17 @@
             <tr>
                 <td>员工：</td>
                 <td>
-                    <input type="text" name="staffId" id="staffId" onclick="getData()">
+                    <input type="text" name="userinfo" id="staffId" onclick="getData()">
                 </td>
             </tr>
             <tr>
-                <td>休假时间：</td>
+                <td>加班时间：</td>
                 <td>
-                    <input type="text" name="begin" class="Wdate"
-                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width: 120px"/>
+                    <input type="text" name="beginTime" class="Wdate"
+                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width: 180px;height: 25px"/>
                     <span> ---- </span>
-                    <input type="text" name="end" class="Wdate"
-                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width: 120px"/>
+                    <input type="text" name="endTime" class="Wdate"
+                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width: 180px;height: 25px"/>
                 </td>
             </tr>
             <tr>

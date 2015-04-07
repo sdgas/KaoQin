@@ -74,7 +74,7 @@
         </button>
         <ul class="dropdown-menu" role="menu">
             <li>
-                <a href="#"> 录入加班信息 </a>
+                <a href="<%=basePath%>page/ot/apply.jsp"> 录入加班信息 </a>
             </li>
         </ul>
     </div>
