@@ -112,24 +112,25 @@
                             value: data.userinfos[i].BADGENUMBER
                         };
                     }
-                }
-            });
-            // 模糊匹配
-            $("#staffId").autocomplete(objects, {
-                delay: 50,
-                minChars: 1, // 表示在自动完成激活之前填入的最小字符
-                max: 200, // 表示列表里的条目数
-                matchContains: true, // 表示包含匹配,相当于模糊匹配
-                scrollHeight: 200, // 表示列表显示高度,默认高度为180
 
-                formatItem: function (row) {
-                    return row.name;
-                },
-                formatMatch: function (row) {
-                    return row.name;
-                },
-                formatResult: function (row) {
-                    return row.value;
+                    // 模糊匹配
+                    $("#staffId").autocomplete(objects, {
+                        delay: 50,
+                        minChars: 1, // 表示在自动完成激活之前填入的最小字符
+                        max: 200, // 表示列表里的条目数
+                        matchContains: true, // 表示包含匹配,相当于模糊匹配
+                        scrollHeight: 200, // 表示列表显示高度,默认高度为180
+
+                        formatItem: function (row) {
+                            return row.name;
+                        },
+                        formatMatch: function (row) {
+                            return row.name;
+                        },
+                        formatResult: function (row) {
+                            return row.value;
+                        }
+                    });
                 }
             });
         }

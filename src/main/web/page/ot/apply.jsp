@@ -99,24 +99,24 @@
                             value: data.userinfos[i].BADGENUMBER
                         };
                     }
-                }
-            });
-            // 模糊匹配
-            $("#staffId").autocomplete(objects, {
-                delay: 50,
-                minChars: 1, // 表示在自动完成激活之前填入的最小字符
-                max: 200, // 表示列表里的条目数
-                matchContains: true, // 表示包含匹配,相当于模糊匹配
-                scrollHeight: 200, // 表示列表显示高度,默认高度为180
+                    // 模糊匹配
+                    $("#staffId").autocomplete(objects, {
+                        delay: 50,
+                        minChars: 1, // 表示在自动完成激活之前填入的最小字符
+                        max: 200, // 表示列表里的条目数
+                        matchContains: true, // 表示包含匹配,相当于模糊匹配
+                        scrollHeight: 200, // 表示列表显示高度,默认高度为180
 
-                formatItem: function (row) {
-                    return row.name;
-                },
-                formatMatch: function (row) {
-                    return row.name;
-                },
-                formatResult: function (row) {
-                    return row.value;
+                        formatItem: function (row) {
+                            return row.name;
+                        },
+                        formatMatch: function (row) {
+                            return row.name;
+                        },
+                        formatResult: function (row) {
+                            return row.value;
+                        }
+                    });
                 }
             });
         }
@@ -150,10 +150,12 @@
                 <td>加班时间：</td>
                 <td>
                     <input type="text" name="beginTime" class="Wdate"
-                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width: 180px;height: 25px"/>
+                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+                           style="width: 180px;height: 25px"/>
                     <span> ---- </span>
                     <input type="text" name="endTime" class="Wdate"
-                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})" style="width: 180px;height: 25px"/>
+                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+                           style="width: 180px;height: 25px"/>
                 </td>
             </tr>
             <tr>
