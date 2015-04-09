@@ -12,9 +12,16 @@ import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.sdgas.model.DEPARTMENTS;
+import org.sdgas.model.Period;
+import org.sdgas.model.USERINFO;
+import org.sdgas.service.DepartmentService;
+import org.sdgas.service.PeriodService;
+import org.sdgas.service.UserInfoService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.Resource;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -38,6 +45,11 @@ public class ExcelUtil {
     private static ExcelUtil eu = new ExcelUtil();
     ChangeTime changeTime = new ChangeTime();
     private final static Logger logger = Logger.getLogger(ExcelUtil.class);
+
+    private DepartmentService departmentService;
+    private PeriodService periodService;
+    private UserInfoService userInfoService;
+
 
     /**
      * 根据标题获取相应的方法名称
@@ -301,23 +313,82 @@ public class ExcelUtil {
         List<Object> objs = null;
         try {
             Row row = sheet.getRow(readLine);  //开始行，主题栏
+            if (row.getCell(0).getStringCellValue().trim().contains("排班"))
+                objs = readExcel_Schedule(wb, clz, readLine + 1, tailLine); // 读取排班信息
+            else {
+                objs = new ArrayList<Object>();
+                Map<Integer, String> maps = getHeaderMap(row, clz);   //设定对应的字段顺序与方法名
+                if (maps == null || maps.size() <= 0)
+                    throw new RuntimeException("要读取的Excel的格式不正确，检查是否设定了合适的行");//与order顺序不符
+                for (int i = readLine + 1; i <= sheet.getLastRowNum() - tailLine; i++) {     //取数据
+                    row = sheet.getRow(i);
+                    Object obj = clz.newInstance();        //   调用无参结构
+                    for (Cell c : row) {
+                        int ci = c.getColumnIndex();
+                        String mn = maps.get(ci).substring(3);  //消除get
+                        mn = mn.substring(0, 1).toLowerCase() + mn.substring(1);
+                        if (this.getCellValue(c).matches("\\d{4}-\\d{2}-\\d{2}"))
+                            BeanUtils.copyProperty(obj, mn, ChangeTime.parseStringToShortDate(this.getCellValue(c)));
+                        else
+                            BeanUtils.copyProperty(obj, mn, this.getCellValue(c));
+                    }
+                    objs.add(obj);
+                }
+            }
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+            logger.error(e);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            logger.error(e);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            logger.error(e);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            logger.error(e);
+        }
+        return objs;
+    }
+
+    //todo:读取排班信息
+    public List<Object> readExcel_Schedule(Workbook wb, Class clz, int readLine, int tailLine) {
+        Sheet sheet = wb.getSheetAt(0);     //取第一张表
+        List<Object> objs = null;
+        try {
+            Row row = sheet.getRow(readLine);  //开始行，主题栏
+            String tep = row.getCell(0).getStringCellValue().trim();
+            String dep = tep.split("：").length > 1 ? tep.split("：")[1] : tep.split(":")[1]; //部门信息
+            tep = row.getCell(2).getStringCellValue().trim();
+            String schedule = tep.split("：").length > 1 ? tep.split("：")[1] : tep.split(":")[1];  //组别
+            tep = row.getCell(7).getStringCellValue().trim();
+            String month = tep.split("：").length > 1 ? tep.split("：")[1] : tep.split(":")[1]; //排班月份
             objs = new ArrayList<Object>();
+            row = sheet.getRow(readLine + 1);//读取下一行
             Map<Integer, String> maps = getHeaderMap(row, clz);   //设定对应的字段顺序与方法名
             if (maps == null || maps.size() <= 0) throw new RuntimeException("要读取的Excel的格式不正确，检查是否设定了合适的行");//与order顺序不符
-            for (int i = readLine + 1; i <= sheet.getLastRowNum() - tailLine; i++) {     //取数据
+            for (int i = readLine + 2; i <= sheet.getLastRowNum() - tailLine; i++) {     //取数据
                 row = sheet.getRow(i);
                 Object obj = clz.newInstance();        //   调用无参结构
                 for (Cell c : row) {
                     int ci = c.getColumnIndex();
                     String mn = maps.get(ci).substring(3);  //消除get
                     mn = mn.substring(0, 1).toLowerCase() + mn.substring(1);
-                    //Map<String, Object> params = new HashMap<String, Object>();
-                    System.out.println("C:" + this.getCellValue(c));
-                    if (this.getCellValue(c).matches("\\d{4}-\\d{2}-\\d{2}"))
-                        BeanUtils.copyProperty(obj, mn, ChangeTime.parseStringToShortDate(this.getCellValue(c)));
-                    else
-                        BeanUtils.copyProperty(obj, mn, this.getCellValue(c));
+                    if ("休".equals(this.getCellValue(c)))
+                        BeanUtils.copyProperty(obj, mn, "");
+                    else if (this.getCellValue(c).matches("[A-Z][0-9]*")) {
+                        DEPARTMENTS departments = departmentService.findByDepName(dep);
+                        Period period = periodService.findByDepAndSymbol(departments.getDEPTID(), this.getCellValue(c), schedule);
+                        BeanUtils.copyProperty(obj, mn, period.getId());
+                    } else {
+                        USERINFO userinfo = userInfoService.findByName(this.getCellValue(c));
+                        if (userinfo != null)
+                            BeanUtils.copyProperty(obj, mn, userinfo.getUSERID());
+                        else
+                            throw new RuntimeException("用户：" + this.getCellValue(c) + "信息不存在！");
+                    }
                 }
+                BeanUtils.copyProperty(obj, "scheduleDate", month);
                 objs.add(obj);
             }
         } catch (InstantiationException e) {
@@ -364,7 +435,7 @@ public class ExcelUtil {
         List<ExcelHeader> headers = getHeaderList(clz);    //取后台标题
         Map<Integer, String> maps = new HashMap<Integer, String>();
         for (Cell c : titleRow) {
-            String title = c.getStringCellValue();        //取excel的标题栏
+            String title = this.getCellValue(c);        //取excel的标题栏
             for (ExcelHeader eh : headers) {
                 if (eh.getTitle().equals(title.trim())) {      //相等则设定对应的字段顺序与方法名
                     maps.put(c.getColumnIndex(), eh.getMethodName().replace("get", "set"));
@@ -394,5 +465,20 @@ public class ExcelUtil {
 
     public static ExcelUtil getInstance() {
         return eu;
+    }
+
+    @Resource(name = "departmentServiceImpl")
+    public void setDepartmentService(DepartmentService departmentService) {
+        this.departmentService = departmentService;
+    }
+
+    @Resource(name = "periodServiceImpl")
+    public void setPeriodService(PeriodService periodService) {
+        this.periodService = periodService;
+    }
+
+    @Resource(name = "userInfoServiceImpl")
+    public void setUserInfoService(UserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
     }
 }

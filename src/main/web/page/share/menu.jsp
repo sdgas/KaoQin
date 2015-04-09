@@ -86,7 +86,7 @@
         </button>
         <ul class="dropdown-menu" role="menu">
             <li>
-                <a href="#">每月排班</a>
+                <a href="<%=basePath%>page/scheduleInfo/DataOperation.jsp">每月排班</a>
             </li>
             <li class="divider"></li>
             <li>
