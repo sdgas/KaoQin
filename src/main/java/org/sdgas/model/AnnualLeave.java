@@ -1,14 +1,22 @@
 package org.sdgas.model;
 
+import org.sdgas.util.ExcelResources;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
 /**
  * Created by 120378 on 2015-04-07.
  */
+@Entity
 public class AnnualLeave {
 
+    private int id;
     /**
      * 用户信息
      */
-    private String userId;
+    private int userId;
 
     /**
      * 剩余天数
@@ -21,24 +29,31 @@ public class AnnualLeave {
     private String remark;
 
     /**
-     * 是否限制
-     */
-    private String limited;
-
-    /**
      * 年份
      */
     private int year;
 
 
-    public String getUserId() {
+    @Id
+    @GeneratedValue
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    @ExcelResources(order = 1, title = "姓名")
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
+    @ExcelResources(order = 2, title = "年假天数")
     public int getDays() {
         return days;
     }
@@ -55,14 +70,7 @@ public class AnnualLeave {
         this.remark = remark;
     }
 
-    public String getLimited() {
-        return limited;
-    }
-
-    public void setLimited(String limited) {
-        this.limited = limited;
-    }
-
+    @ExcelResources(order = 3, title = "年份")
     public int getYear() {
         return year;
     }

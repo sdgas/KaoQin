@@ -6,8 +6,10 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.sdgas.VO.FileVO;
 import org.sdgas.model.Administrators;
+import org.sdgas.model.AnnualLeave;
 import org.sdgas.model.Holiday;
 import org.sdgas.model.ScheduleInfo;
+import org.sdgas.service.AnnualLeaveService;
 import org.sdgas.service.HolidayService;
 import org.sdgas.service.ScheduleInfoService;
 import org.sdgas.service.UserInfoService;
@@ -33,16 +35,20 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     private ExcelUtil excelUtil;
     private HolidayService holidayService;
     private ScheduleInfoService scheduleInfoService;
+    private AnnualLeaveService annualLeaveService;
 
     private final static Logger logger = LogManager.getLogger(FileAction.class);
     private final FileVO fileVO = new FileVO();
     private List<Object> obj = new ArrayList<Object>();
     private List<Holiday> holidays = new ArrayList<Holiday>();
+    private List<AnnualLeave> annualLeaves = new ArrayList<AnnualLeave>();
     private List<ScheduleInfo> scheduleInfos = new ArrayList<ScheduleInfo>();
     private int count = 0;
     private int num = 0;
     private static String SAVE_PATH_DIR_M = "D:/kaoqin/uploadFile/holiday/";
     private static String SAVE_PATH_DIR_S = "D:/kaoqin/uploadFile/Schedule/";
+    private static String SAVE_PATH_DIR_A = "D:/kaoqin/uploadFile/annualLeave/";
+    private static String SAVE_PATH_DIR = "D:/kaoqin/downloadFile/";
 
     //获取当前登录用户
     HttpSession session = ServletActionContext.getRequest().getSession();
@@ -189,6 +195,71 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
         return SUCCESS;
     }
 
+
+    public String recoverExcelByAnnualLeave() {
+        count = 0;
+        num = 0;
+        String name = uploadAttachment(fileVO.getUploadFile(), fileVO.getFileName(), SAVE_PATH_DIR_A);
+        try {
+            obj = excelUtil.readExcelByPath(SAVE_PATH_DIR_A + name, AnnualLeave.class, 0, 0);
+            for (Object anObj : obj) {
+                annualLeaves.add((AnnualLeave) anObj);
+            }
+
+            for (AnnualLeave a : annualLeaves) {
+                AnnualLeave annualLeave = annualLeaveService.findByUser(a.getUserId());
+                if (annualLeave == null) {
+                    annualLeave = new AnnualLeave();
+                    annualLeave.setUserId(a.getUserId());
+                    annualLeave.setYear(a.getYear());
+                    annualLeave.setDays(a.getDays());
+                    annualLeaveService.save(annualLeave);
+                    count++;
+                    logger.info("管理员：" + user.getUserId() + "导入员工：" + a.getUserId() + "年假信息");
+                } else {
+                    annualLeave.setUserId(a.getUserId());
+                    annualLeave.setYear(a.getYear());
+                    annualLeave.setDays(a.getDays());
+                    annualLeaveService.update(annualLeave);
+                    num++;
+                    logger.info("管理员：" + user.getUserId() + "修改员工：" + a.getUserId() + "年假信息");
+                }
+
+            }
+        } catch (RuntimeException e) {
+            if (e.getMessage().contains("格式"))
+                fileVO.setResultMessage("要读取的Excel的格式不正确，请查检测格式！");
+            logger.error(e);
+            return ERROR;
+        }
+
+        fileVO.setResultMessage("成功导入假节日信息" + count + "条记录，修改" + num + "条记录。");
+        return SUCCESS;
+    }
+
+
+    public String createExcelByExaminer() {
+
+        // 得到备份文件的目录的真实路径
+        File dir = new File(SAVE_PATH_DIR);
+        // 如果该目录不存在，就创建
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+        /*es = examinerService.allExaminer();
+        if (es.size() <= 0) {
+            fileVO.setResultMessage("考生信息为空！");
+            return ERROR;
+        }
+        String date = ChangeTime.formatDate(ChangeTime.getCurrentDate());
+        //使用于07以上的版本，03以下的可以修改参数
+        excelUtil.exportExcelByPath(SAVE_PATH_DIR + date + ".xlsx",
+                es, Examiner.class, true, date + " 考生信息 ");
+        logger.info("成功备份考生信息文件！文件名为" + date);
+        fileVO.setResultMessage("成功备份考生信息文件！文件名为" + date);*/
+        return SUCCESS;
+    }
+
     @Resource(name = "holidayServiceImpl")
     public void setHolidayService(HolidayService holidayService) {
         this.holidayService = holidayService;
@@ -197,6 +268,11 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     @Resource(name = "scheduleInfoServiceImpl")
     public void setScheduleInfoService(ScheduleInfoService scheduleInfoService) {
         this.scheduleInfoService = scheduleInfoService;
+    }
+
+    @Resource(name = "annualLeaveServiceImpl")
+    public void setAnnualLeaveService(AnnualLeaveService annualLeaveService) {
+        this.annualLeaveService = annualLeaveService;
     }
 
     @Override

@@ -44,6 +44,9 @@ public class VacationInfoAction extends MyActionSupport implements ModelDriven<V
                 + ";" + vacationInfoVO.getEnd() + "," + vacationInfoVO.getRemarks2();
         vacationInfo.setRemarks(tep);
         vacationInfoService.save(vacationInfo);
+        if ("A".equals(vacationInfo.getVacationSymbol())) {
+
+        }
         logger.info("管理员：" + user.getUserId() + " 添加了一条休假记录(" + vacationInfo.getId() + ")。IP:" + ip);
         vacationInfoVO.setResultMessage("<script>alert('添加成功！');location.href='/page/leave/apply.jsp';</script>");
         return SUCCESS;

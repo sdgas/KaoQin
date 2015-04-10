@@ -2,6 +2,7 @@ package org.sdgas.util;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.StringTokenizer;
 
@@ -186,6 +187,17 @@ public class ChangeTime {
 
     public static String getCurrentShortDate() {
         return ChangeTime.formatRealDate(new Date());
+    }
+
+    public static int calDayByYearAndMonth(String dyear, String dmouth) {
+        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy/MM");
+        Calendar rightNow = Calendar.getInstance();
+        try {
+            rightNow.setTime(simpleDate.parse(dyear + "/" + dmouth));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return rightNow.getActualMaximum(Calendar.DAY_OF_MONTH);//根据年月 获取月份天数
     }
 
 }

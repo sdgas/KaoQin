@@ -28,6 +28,8 @@ import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 /**
@@ -35,7 +37,7 @@ import java.util.*;
  * 该类利用了BeanUtils框架中的反射完成
  * 使用该类的前提，在相应的实体对象上通过ExcelReources来完成相应的注解
  *
- * @author Administrator
+ * @author wilson.he
  */
 
 @Service
@@ -43,7 +45,6 @@ import java.util.*;
 public class ExcelUtil {
 
     private static ExcelUtil eu = new ExcelUtil();
-    ChangeTime changeTime = new ChangeTime();
     private final static Logger logger = Logger.getLogger(ExcelUtil.class);
 
     private DepartmentService departmentService;
@@ -315,7 +316,9 @@ public class ExcelUtil {
             Row row = sheet.getRow(readLine);  //开始行，主题栏
             if (row.getCell(0).getStringCellValue().trim().contains("排班"))
                 objs = readExcel_Schedule(wb, clz, readLine + 1, tailLine); // 读取排班信息
-            else {
+            else if (row.getCell(0).getStringCellValue().trim().contains("年假")) {
+                objs = readExcel_AnnualLeave(wb, clz, readLine, tailLine); // 读取年假信息
+            } else {
                 objs = new ArrayList<Object>();
                 Map<Integer, String> maps = getHeaderMap(row, clz);   //设定对应的字段顺序与方法名
                 if (maps == null || maps.size() <= 0)
@@ -351,7 +354,7 @@ public class ExcelUtil {
         return objs;
     }
 
-    //todo:读取排班信息
+    //读取排班信息
     public List<Object> readExcel_Schedule(Workbook wb, Class clz, int readLine, int tailLine) {
         Sheet sheet = wb.getSheetAt(0);     //取第一张表
         List<Object> objs = null;
@@ -366,6 +369,7 @@ public class ExcelUtil {
             objs = new ArrayList<Object>();
             row = sheet.getRow(readLine + 1);//读取下一行
             Map<Integer, String> maps = getHeaderMap(row, clz);   //设定对应的字段顺序与方法名
+
             if (maps == null || maps.size() <= 0) throw new RuntimeException("要读取的Excel的格式不正确，检查是否设定了合适的行");//与order顺序不符
             for (int i = readLine + 2; i <= sheet.getLastRowNum() - tailLine; i++) {     //取数据
                 row = sheet.getRow(i);
@@ -421,6 +425,61 @@ public class ExcelUtil {
             }
         }
         return headers;
+    }
+
+    //todo:读取年假信息
+    public List<Object> readExcel_AnnualLeave(Workbook wb, Class clz, int readLine, int tailLine) {
+        Sheet sheet = wb.getSheetAt(0);     //取第一张表
+        List<Object> objs = null;
+        try {
+            Row row = sheet.getRow(readLine);  //开始行，主题栏
+            String tep = row.getCell(0).getStringCellValue().trim();
+            String year = this.matchNum(tep); //年份
+            objs = new ArrayList<Object>();
+            row = sheet.getRow(readLine + 1);//读取下一行
+            Map<Integer, String> maps = getHeaderMap(row, clz);   //设定对应的字段顺序与方法名
+            if (maps == null || maps.size() <= 0 || "ERR".equals(year))
+                throw new RuntimeException("要读取的Excel的格式不正确，检查是否设定了合适的行");//与order顺序不符
+
+            for (int i = readLine + 2; i <= sheet.getLastRowNum() - tailLine; i++) {     //取数据
+                row = sheet.getRow(i);
+                Object obj = clz.newInstance();        //   调用无参结构
+                for (Cell c : row) {
+                    int ci = c.getColumnIndex();
+                    String mn = maps.get(ci).substring(3);  //消除get
+                    mn = mn.substring(0, 1).toLowerCase() + mn.substring(1);
+                    if ("暂不享受".equals(this.getCellValue(c))) {
+                        BeanUtils.copyProperty(obj, mn, -1);
+                        break;
+                    } else if (this.getCellValue(c).matches("\\d+")) {
+                        BeanUtils.copyProperty(obj, mn, this.getCellValue(c));
+                        break;
+                    } else {
+                        USERINFO userinfo = userInfoService.findByName(this.getCellValue(c));
+                        if (userinfo != null)
+                            BeanUtils.copyProperty(obj, mn, userinfo.getUSERID());
+                        /*else
+                            throw new RuntimeException("用户：" + this.getCellValue(c) + "信息不存在！");*/
+
+                    }
+                }
+                BeanUtils.copyProperty(obj, "year", year);
+                objs.add(obj);
+            }
+        } catch (InstantiationException e) {
+            e.printStackTrace();
+            logger.error(e);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+            logger.error(e);
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+            logger.error(e);
+        } catch (NumberFormatException e) {
+            e.printStackTrace();
+            logger.error(e);
+        }
+        return objs;
     }
 
     /**
@@ -480,5 +539,16 @@ public class ExcelUtil {
     @Resource(name = "userInfoServiceImpl")
     public void setUserInfoService(UserInfoService userInfoService) {
         this.userInfoService = userInfoService;
+    }
+
+
+    private String matchNum(String str) {
+        String regex = "\\d+";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher("2015年年假数据");
+        while (matcher.find()) {
+            return matcher.group();
+        }
+        return "ERR";
     }
 }
