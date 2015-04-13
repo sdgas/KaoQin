@@ -5,14 +5,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.sdgas.VO.FileVO;
-import org.sdgas.model.Administrators;
-import org.sdgas.model.AnnualLeave;
-import org.sdgas.model.Holiday;
-import org.sdgas.model.ScheduleInfo;
-import org.sdgas.service.AnnualLeaveService;
-import org.sdgas.service.HolidayService;
-import org.sdgas.service.ScheduleInfoService;
-import org.sdgas.service.UserInfoService;
+import org.sdgas.model.*;
+import org.sdgas.service.*;
 import org.sdgas.util.ChangeTime;
 import org.sdgas.util.ExcelUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +18,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 @Component("file")
@@ -36,6 +31,8 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     private HolidayService holidayService;
     private ScheduleInfoService scheduleInfoService;
     private AnnualLeaveService annualLeaveService;
+    private UserInfoService userInfoService;
+    private DepartmentService departmentService;
 
     private final static Logger logger = LogManager.getLogger(FileAction.class);
     private final FileVO fileVO = new FileVO();
@@ -110,6 +107,8 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
                 if (scheduleInfo == null) {
                     scheduleInfo = new ScheduleInfo();
                     scheduleInfo.setUserinfo(s.getUserinfo());
+                    USERINFO userinfo = userInfoService.find(USERINFO.class, s.getUserinfo());
+                    scheduleInfo.setDepId(userinfo.getDEFAULTDEPTID());
                     scheduleInfo.setScheduleDate(s.getScheduleDate());
                     scheduleInfo.set_1st(s.get_1st());
                     scheduleInfo.set_2nd(s.get_2nd());
@@ -238,25 +237,30 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     }
 
 
-    public String createExcelByExaminer() {
-
+    public String createExcelBySch() {
+        List<ScheduleInfo> scheduleInfos = new ArrayList<ScheduleInfo>();
         // 得到备份文件的目录的真实路径
         File dir = new File(SAVE_PATH_DIR);
         // 如果该目录不存在，就创建
         if (!dir.exists()) {
             dir.mkdirs();
         }
-        /*es = examinerService.allExaminer();
-        if (es.size() <= 0) {
+
+        Calendar cal = Calendar.getInstance();//使用日历类
+        int year = cal.get(Calendar.YEAR);//得到年
+        int month = cal.get(Calendar.MONTH);//得到月，从0开始的
+        scheduleInfos = scheduleInfoService.findByDepAndDate(user.getDepId(), year + "" + month);
+        /*if (scheduleInfos.size() <= 0) {
             fileVO.setResultMessage("考生信息为空！");
             return ERROR;
-        }
+        }*/
         String date = ChangeTime.formatDate(ChangeTime.getCurrentDate());
+        String dep = departmentService.findByID(user.getDepId()).getDEPTNAME();
         //使用于07以上的版本，03以下的可以修改参数
         excelUtil.exportExcelByPath(SAVE_PATH_DIR + date + ".xlsx",
-                es, Examiner.class, true, date + " 考生信息 ");
-        logger.info("成功备份考生信息文件！文件名为" + date);
-        fileVO.setResultMessage("成功备份考生信息文件！文件名为" + date);*/
+                scheduleInfos, ScheduleInfo.class, true, date, dep);
+        //logger.info("成功备份考生信息文件！文件名为" + date);
+        // fileVO.setResultMessage("成功备份考生信息文件！文件名为" + date);
         return SUCCESS;
     }
 
@@ -273,6 +277,16 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     @Resource(name = "annualLeaveServiceImpl")
     public void setAnnualLeaveService(AnnualLeaveService annualLeaveService) {
         this.annualLeaveService = annualLeaveService;
+    }
+
+    @Resource(name = "userInfoServiceImpl")
+    public void setUserInfoService(UserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
+    }
+
+    @Resource(name = "departmentServiceImpl")
+    public void setDepartmentService(DepartmentService departmentService) {
+        this.departmentService = departmentService;
     }
 
     @Override

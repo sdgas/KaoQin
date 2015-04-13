@@ -23,6 +23,11 @@ public class ScheduleInfo {
     private int userinfo;
 
     /**
+     * 部门编号
+     */
+    private int depId;
+
+    /**
      * 排班日期
      */
     private String scheduleDate;
@@ -365,5 +370,13 @@ public class ScheduleInfo {
 
     public void set_20th(int _20th) {
         this._20th = _20th;
+    }
+
+    public int getDepId() {
+        return depId;
+    }
+
+    public void setDepId(int depId) {
+        this.depId = depId;
     }
 }

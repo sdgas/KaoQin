@@ -2,16 +2,11 @@ package org.sdgas.util;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFDataFormat;
-import org.apache.poi.hssf.usermodel.HSSFDateUtil;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFDataFormat;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.*;
 import org.sdgas.model.DEPARTMENTS;
 import org.sdgas.model.Period;
 import org.sdgas.model.USERINFO;
@@ -26,6 +21,7 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -64,102 +60,119 @@ public class ExcelUtil {
         return mn;
     }
 
-    private Workbook handleExcel(List objs, Class clz, boolean isXssf, String message) {
-        XSSFWorkbook wb = null;
-        try {
-            if (isXssf) {
-                XSSFWorkbook w = new XSSFWorkbook();
-            } else {
-                HSSFWorkbook w = new HSSFWorkbook();
-            }
-            wb = new XSSFWorkbook();
-            XSSFDataFormat format = wb.createDataFormat();
-            XSSFSheet sheet = wb.createSheet(message + "备份记录");   //取excel工作表对象
-            XSSFCellStyle cellStyle = wb.createCellStyle();         //设置excel单元格样式
-            XSSFCellStyle passwordCellStyle = wb.createCellStyle();   //设置密码单元格样式
-            XSSFDataFormat passwordFormat = wb.createDataFormat();
-            passwordCellStyle.setDataFormat(passwordFormat.getFormat(";;;"));
-            List<ExcelHeader> headers = getHeaderList(clz);
-            Collections.sort(headers);
-            sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 0, (short) (headers.size() - 1)));
-            Row r0 = sheet.createRow(0);
-            Cell cell = r0.createCell(0);
-            r0.setHeightInPoints(28);
-            cell.setCellValue(message + "备份记录");
-            Row r = sheet.createRow(1);
-            r.setHeightInPoints(25);
-            cell.setCellStyle(cellStyle);
-            //输出标题
-            for (int i = 0; i < headers.size(); i++) {
-                Cell cell1 = r.createCell(i);
-                if (headers.get(i).getTitle().equals("密码"))
-                    cell1.setCellStyle(passwordCellStyle);
-                else
-                    cell1.setCellStyle(cellStyle);
-                cell1.setCellValue(headers.get(i).getTitle());
-            }
-            Object obj = null;
-            //输出用户资料信息
-            if (message.indexOf("用户资料 ") > 0) {
-                sheet.setColumnWidth(3, 32 * 150);
-                sheet.setColumnWidth(4, 32 * 110);
-                sheet.setColumnWidth(7, 32 * 120);
-                for (int i = 0; i < objs.size(); i++) {
-                    r = sheet.createRow(i + 2);
-                    obj = objs.get(i);
-                    for (int j = 0; j < headers.size(); j++) {
-                        Cell cell2 = r.createCell(j);
-                        copyDefaultCellStyle(null, cell2, cellStyle, 0);
-                        if (getMethodName(headers.get(j)).equals("nabled"))
-                            cell2.setCellValue(BeanUtils.getProperty(obj, "enabled"));
-                        else if (getMethodName(headers.get(j)).equals("password")) {
-                            cell2.setCellStyle(passwordCellStyle);
-                            cell2.setCellValue(BeanUtils.getProperty(obj, getMethodName(headers.get(j))));
-                        } else
-                            cell2.setCellValue(BeanUtils.getProperty(obj, getMethodName(headers.get(j))));
-                    }
-                }
-            }
-            //输出房间使用信息数据
-            else {
-                sheet.setColumnWidth(0, 32 * 80);
-                sheet.setColumnWidth(2, 32 * 100);
-                sheet.setColumnWidth(3, 32 * 190);
-                sheet.setColumnWidth(4, 32 * 190);
-                sheet.setColumnWidth(5, 32 * 190);
-                sheet.setColumnWidth(10, 32 * 130);
-                for (int i = 0; i < objs.size(); i++) {
-                    r = sheet.createRow(i + 2);
-                    obj = objs.get(i);
-                    for (int j = 0; j < headers.size(); j++) {
-                        Cell cell2 = r.createCell(j);
-                        if (j == 3 || j == 4 || j == 5) {
-                            XSSFCellStyle cs3 = wb.createCellStyle();
-                            cell2.setCellValue(new Date());
-                            copyDefaultCellStyle(format, cell2, cs3, 1);
-                        }
-                        if (j == 10) {
-                            XSSFCellStyle cs2 = wb.createCellStyle();
-                            copyDefaultCellStyle(format, cell2, cs2, 2);
-                        }
-                        copyDefaultCellStyle(null, cell2, cellStyle, 0);
-                        cell2.setCellValue(BeanUtils.getProperty(obj, getMethodName(headers.get(j))));
-                    }
-                }
-            }
-            //设置行列的默认宽度和高度
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-            logger.error(e);
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-            logger.error(e);
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-            logger.error(e);
+    private Workbook handleExcel(List objs, Class clz, boolean isXssf, String message, String dep) {
+        XSSFWorkbook wb = new XSSFWorkbook();
+
+        XSSFSheet sheet = wb.createSheet("考勤月报表");   //取excel工作表对象
+
+        List<ExcelHeader> headers = getHeaderList(clz);
+        Collections.sort(headers);
+
+        //合并单元格
+        sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 0, (short) (headers.size() + 9)));
+        Row r0 = sheet.createRow(0);
+        Cell cell = r0.createCell(0);
+        r0.setHeightInPoints(28);
+
+        Calendar cal = Calendar.getInstance();//使用日历类
+        int year = cal.get(Calendar.YEAR);//得到年
+        int month = cal.get(Calendar.MONTH) + 1;//得到月，从0开始的
+
+        cell.setCellValue("佛山市顺德区港华燃气有限公司" + year + "年" + month + "月 " + dep + "考勤月报表");
+        XSSFFont font = wb.createFont();
+        font.setFontHeightInPoints((short) 20); // 字体高度
+        font.setFontName("宋体"); // 字体
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); // 宽度
+
+        XSSFCellStyle cellStyle = wb.createCellStyle(); //设置excel单元格样式
+        cellStyle.setFont(font);
+        cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER); // 居中
+        cell.setCellStyle(cellStyle);
+
+        Row r = sheet.createRow(1);
+        r.setHeightInPoints(25);
+
+        cellStyle = wb.createCellStyle();
+        Cell c = r.createCell(1);
+        c.setCellValue("日期");
+
+        --month;
+        for (int j = 1; j < headers.size() - 1; j++) {
+            int num = Integer.valueOf(this.matchNum(headers.get(j).getTitle()));
+            Cell c1 = r.createCell(j + 1);
+            c1.setCellStyle(cellStyle);
+            String week = getWeekOfDate(year + "-" + month + "-" + num);
+            c1.setCellValue(week);
+
+            if (num == calDayByYearAndMonth(year + "", month + ""))
+                ++month;
         }
+
+        r = sheet.createRow(2);
+        c = r.createCell(0);
+        c.setCellStyle(cellStyle);
+        c.setCellValue("姓名");
+        //输出标题
+        int i = 1;
+        for (; i < headers.size() - 1; i++) {
+            Cell c2 = r.createCell(i + 1);
+            c2.setCellStyle(cellStyle);
+            c2.setCellValue(headers.get(i).getTitle());
+        }
+
+        c = sheet.getRow(1).createCell(i + 1);
+        CellStyle cs = wb.createCellStyle();
+        cs.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+        c.setCellStyle(cs);
+        c.setCellValue("合计");
+        sheet.addMergedRegion(new CellRangeAddress(1, (short) 1, i + 1, (short) i + 5));
+
+        String type[] = {"病假天数", "事假天数", "补休小时", "加班小时", "出勤天数"};
+        for (String tep : type) {
+            c = sheet.getRow(2).createCell(++i);
+            c.setCellStyle(cs);
+            c.setCellValue(tep);
+        }
+
+        c = sheet.getRow(1).createCell(++i);
+        c.setCellStyle(cs);
+        c.setCellValue("签名确认");
+        sheet.addMergedRegion(new CellRangeAddress(1, (short) 2, i, (short) i));
+
+        Object obj = null;
+
         return wb;
     }
+
+    //计算YY-MM-DD为星期几
+
+    public static String getWeekOfDate(String date) {
+        Date d = ChangeTime.parseStringToShortDate(date);
+        String[] weekOfDays = {"日", "一", "二", "三", "四", "五", "六"};
+        Calendar calendar = Calendar.getInstance();
+        if (date != null) {
+            calendar.setTime(d);
+        }
+        int w = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        if (w < 0) {
+            w = 0;
+        }
+        return weekOfDays[w];
+
+    }
+
+    //计算当前月天数
+    public int calDayByYearAndMonth(String dyear, String dmouth) {
+        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy/MM");
+        Calendar rightNow = Calendar.getInstance();
+        try {
+            rightNow.setTime(simpleDate.parse(dyear + "/" + dmouth));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return rightNow.getActualMaximum(Calendar.DAY_OF_MONTH);//根据年月 获取月份天数
+    }
+
 
     /**
      * 导出对象到Excel，直接新建一个Excel完成导出，基于路径的导出，不基于模板
@@ -169,8 +182,8 @@ public class ExcelUtil {
      * @param clz     对象类型
      * @param isXssf  是否是2007版本
      */
-    public void exportExcelByPath(String outPath, List objs, Class clz, boolean isXssf, String message) {
-        Workbook wb = handleExcel(objs, clz, isXssf, message);
+    public void exportExcelByPath(String outPath, List objs, Class clz, boolean isXssf, String message, String dep) {
+        Workbook wb = handleExcel(objs, clz, isXssf, message, dep);
         FileOutputStream fos = null;
         try {
             fos = new FileOutputStream(outPath);
@@ -200,9 +213,9 @@ public class ExcelUtil {
      * @param clz    对象类型
      * @param isXssf 是否是2007版本
      */
-    public void exportExcelByPath(OutputStream os, List objs, Class clz, boolean isXssf, String message) {
+    public void exportExcelByPath(OutputStream os, List objs, Class clz, boolean isXssf, String message, String dep) {
         try {
-            Workbook wb = handleExcel(objs, clz, isXssf, message);
+            Workbook wb = handleExcel(objs, clz, isXssf, message, dep);
             wb.write(os);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -545,7 +558,7 @@ public class ExcelUtil {
     private String matchNum(String str) {
         String regex = "\\d+";
         Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher("2015年年假数据");
+        Matcher matcher = pattern.matcher(str);
         while (matcher.find()) {
             return matcher.group();
         }

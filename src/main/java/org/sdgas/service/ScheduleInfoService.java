@@ -3,6 +3,8 @@ package org.sdgas.service;
 import org.sdgas.base.DAO;
 import org.sdgas.model.ScheduleInfo;
 
+import java.util.List;
+
 /**
  * Created by 120378 on 2015-04-08.
  */
@@ -16,4 +18,12 @@ public interface ScheduleInfoService extends DAO {
      * @return 排班情况
      */
     public ScheduleInfo findByUserAndDate(int userId, String schedule);
+
+    /**
+     *
+     * @param depId
+     * @param year
+     * @return
+     */
+    public List<ScheduleInfo> findByDepAndDate(int depId,String year);
 }
