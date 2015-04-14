@@ -139,7 +139,7 @@ public class ExcelUtil {
         c.setCellStyle(cs);
         c.setCellValue("签名确认");
         sheet.addMergedRegion(new CellRangeAddress(1, (short) 2, i, (short) i));
-        Object obj = null;
+
         for (ScheduleInfo s : (List<ScheduleInfo>) objs) {
             Integer sc[] = change(s);
             USERINFO userinfo = userInfoService.find(USERINFO.class, s.getUserinfo());
@@ -175,9 +175,9 @@ public class ExcelUtil {
             String before = year + "-" + month + "-21";
             String after = year + "-" + (month + 1) + "-20";
             List<Holiday> holidays = holidayService.findByDate(before, after); //考勤月的节假日
-
+            int num = 2;//单元格数目
             for (int j = 0; j < 31; j++) {
-                d = d + j;//下一个日期
+
                 Period period = periodService.find(Period.class, sc[j]); //当日排班情况
                 //todo
                 String day = month > 10 ? year + "-" + month : year + "-0" + month;
@@ -187,6 +187,33 @@ public class ExcelUtil {
                 VacationInfo vacationInfo = vacationInfoService.findByUserAndDate(Integer.valueOf(userinfo.getBADGENUMBER()), day);  //当日休假情况
 
                 String msg[] = just(holidays, checkinouts, period, overtime, vacationInfo);
+
+                r = sheet.getRow(count - 3);
+                c = r.createCell(num);
+                c.setCellStyle(wb.createCellStyle());
+                c.setCellValue(msg[0]);
+
+                r = sheet.getRow(count - 2);
+                c = r.createCell(num);
+                c.setCellStyle(wb.createCellStyle());
+                c.setCellValue(msg[1]);
+
+                r = sheet.getRow(count - 1);
+                c = r.createCell(num);
+                c.setCellStyle(wb.createCellStyle());
+                c.setCellValue(msg[2]);
+
+                r = sheet.getRow(count);
+                c = r.createCell(num++);
+                c.setCellStyle(wb.createCellStyle());
+                c.setCellValue(msg[3]);
+
+                int days = WebTool.calDayByYearAndMonth(year + "", month + "");
+                //下一个日期
+                if (d > days) {
+                    d = 1;
+                    month += 1;
+                } else d += 1;
             }
         }
 
@@ -203,9 +230,53 @@ public class ExcelUtil {
                 return msg;
             }
         } else {
+            int size = checkinouts.size();
+            if (size > 0) {
+                //08:30~17:30
+                String periodCome = period.getPeriod().split("~")[0];//上班时间
+                String periodGo = period.getPeriod().split("~")[1];//下班时间
+                if (size == 2) {
+                    String in = ChangeTime.formatWholeDate(checkinouts.get(0).getCHECKTIME()).substring(11, 19);
+                    String out = ChangeTime.formatWholeDate(checkinouts.get(1).getCHECKTIME()).substring(11, 19);
+                    //判断迟到
+                    if (in.compareToIgnoreCase(periodCome) <= 0)
+                        msg[0] = "√";
+                    else
+                        msg[0] = "★";
+                    //判断早退
+                    if (out.compareToIgnoreCase(periodGo) >= 0)
+                        msg[1] = "√";
+                    else
+                        msg[1] = "▲";
+                } else if (size == 1) {
+                    msg[0] = "异常";
+                    msg[1] = "异常";
+                } else if (size > 2) {
+                    for (CHECKINOUT checkinout : checkinouts) {
+                        String date = ChangeTime.formatWholeDate(checkinout.getCHECKTIME()).substring(11, 19);
+                        if (date.compareToIgnoreCase(periodCome) <= 0 && date.compareToIgnoreCase(periodGo) < 0) {
+                            msg[0] = msg[0] == "" || msg[0] == "未打卡" ? "√" : msg[0];
+                            msg[1] = msg[1] == "" || msg[1] == "未打卡" ? "未打卡" : msg[1];
+                        } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) >= 0) {
+                            msg[1] = msg[1] == "" || msg[1] == "未打卡" ? "√" : msg[1];
+                            msg[0] = msg[0] == "" || msg[0] == "未打卡" ? "未打卡" : msg[0];
+                        } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) < 0) {
+                            msg[0] = msg[0] == "" || msg[0] == "未打卡" ? "★" : msg[0];
+                            msg[1] = msg[1] == "" || msg[1] == "未打卡" ? "未打卡" : msg[1];
+                        } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) < 0) {
+                            msg[0] = msg[0] == "" || msg[0] == "未打卡" ? "未打卡" : msg[0];
+                            msg[1] = msg[1] == "" || msg[1] == "未打卡" ? "▲" : msg[1];
+                        } else {
+                            msg[0] = "异常";
+                            msg[1] = "异常";
+                        }
+                    }
+                }
+            } else {
 
+            }
         }
-        return null;
+        return msg;
     }
 
     private Integer[] change(ScheduleInfo scheduleInfo) {

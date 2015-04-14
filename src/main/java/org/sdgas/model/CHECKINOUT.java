@@ -7,6 +7,7 @@ import java.util.Date;
  * Created by 120378 on 2015-04-14.
  */
 @Entity
+@IdClass(CheckInOutPK.class)
 public class CHECKINOUT {
 
     /**
@@ -33,6 +34,12 @@ public class CHECKINOUT {
      * 采集数据的考勤终端/设备ID
      */
     private String SENSORID;
+    private String Memoinfo;
+    private String WorkCode;
+    private String sn;
+    private short UserExtFmt;
+
+
 
     @Id
     public int getUSERID() {
@@ -43,6 +50,7 @@ public class CHECKINOUT {
         this.USERID = USERID;
     }
 
+    @Id
     @Temporal(TemporalType.TIMESTAMP)
     public Date getCHECKTIME() {
         return CHECKTIME;
@@ -77,5 +85,40 @@ public class CHECKINOUT {
 
     public void setSENSORID(String SENSORID) {
         this.SENSORID = SENSORID;
+    }
+
+    @Column(length = 30)
+    public String getMemoinfo() {
+        return Memoinfo;
+    }
+
+    public void setMemoinfo(String memoinfo) {
+        Memoinfo = memoinfo;
+    }
+
+    @Column(length = 24)
+    public String getWorkCode() {
+        return WorkCode;
+    }
+
+    public void setWorkCode(String workCode) {
+        WorkCode = workCode;
+    }
+
+    @Column(length = 20)
+    public String getSn() {
+        return sn;
+    }
+
+    public void setSn(String sn) {
+        this.sn = sn;
+    }
+
+    public short getUserExtFmt() {
+        return UserExtFmt;
+    }
+
+    public void setUserExtFmt(short userExtFmt) {
+        UserExtFmt = userExtFmt;
     }
 }
