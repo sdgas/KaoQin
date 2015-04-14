@@ -37,6 +37,11 @@ public class Overtime {
      */
     private String remarks;
 
+    /**
+     * 加班日期
+     */
+    private String day;
+
     @Id
     @GeneratedValue
     public int getId() {
@@ -90,5 +95,14 @@ public class Overtime {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    @Column(length = 10)
+    public String getDay() {
+        return day;
+    }
+
+    public void setDay(String day) {
+        this.day = day;
     }
 }

@@ -35,11 +35,13 @@ public class OverTimeAction extends MyActionSupport implements ModelDriven<OverT
 
     @Override
     public String execute() {
+
         Overtime overTime = new Overtime();
         overTime.setBeginTime(ChangeTime.parseDate(overTimeVO.getBeginTime()));
         overTime.setEndTime(ChangeTime.parseDate(overTimeVO.getEndTime()));
         overTime.setLongTime(Double.valueOf(overTimeVO.getLongTime()));
         overTime.setUserinfo(Integer.valueOf(overTimeVO.getUserinfo()));
+        overTime.setDay(overTimeVO.getBeginTime().substring(0,10));
         overTimeService.save(overTime);
         logger.info("管理员：" + user.getUserId() + " 添加了一条加班记录(" + overTime.getId() + ")。IP:" + ip);
         overTimeVO.setResultMessage("<script>alert('添加成功！');location.href='/page/ot/apply.jsp';</script>");

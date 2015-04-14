@@ -7,13 +7,8 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
-import org.sdgas.model.DEPARTMENTS;
-import org.sdgas.model.Period;
-import org.sdgas.model.ScheduleInfo;
-import org.sdgas.model.USERINFO;
-import org.sdgas.service.DepartmentService;
-import org.sdgas.service.PeriodService;
-import org.sdgas.service.UserInfoService;
+import org.sdgas.model.*;
+import org.sdgas.service.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +42,10 @@ public class ExcelUtil {
     private DepartmentService departmentService;
     private PeriodService periodService;
     private UserInfoService userInfoService;
+    private OverTimeService overTimeService;
+    private VacationInfoService vacationInfoService;
+    private CheckInOutService checkInOutService;
+    private HolidayService holidayService;
 
 
     /**
@@ -102,10 +101,10 @@ public class ExcelUtil {
             int num = Integer.valueOf(this.matchNum(headers.get(j).getTitle()));
             Cell c1 = r.createCell(j + 1);
             c1.setCellStyle(cellStyle);
-            String week = getWeekOfDate(year + "-" + month + "-" + num);
+            String week = WebTool.getWeekOfDate(year + "-" + month + "-" + num);
             c1.setCellValue(week);
 
-            if (num == calDayByYearAndMonth(year + "", month + ""))
+            if (num == WebTool.calDayByYearAndMonth(year + "", month + ""))
                 ++month;
         }
 
@@ -170,14 +169,43 @@ public class ExcelUtil {
 
             sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 0, (short) 0));
 
+            int d = 21;
+            --month;
+
+            String before = year + "-" + month + "-21";
+            String after = year + "-" + (month + 1) + "-20";
+            List<Holiday> holidays = holidayService.findByDate(before, after); //考勤月的节假日
+
             for (int j = 0; j < 31; j++) {
-                int d = 21;
-                Period period = periodService.find(Period.class, sc[j]);
+                d = d + j;//下一个日期
+                Period period = periodService.find(Period.class, sc[j]); //当日排班情况
                 //todo
+                String day = month > 10 ? year + "-" + month : year + "-0" + month;
+                List<CHECKINOUT> checkinouts = checkInOutService.findByUserAndDate(userinfo.getUSERID(), day, d);  //当日打卡情况
+                day = day + "-" + d;
+                Overtime overtime = overTimeService.findByUserAndDate(Integer.valueOf(userinfo.getBADGENUMBER()), day); //当日加班情况
+                VacationInfo vacationInfo = vacationInfoService.findByUserAndDate(Integer.valueOf(userinfo.getBADGENUMBER()), day);  //当日休假情况
+
+                String msg[] = just(holidays, checkinouts, period, overtime, vacationInfo);
             }
         }
 
         return wb;
+    }
+
+    private String[] just(List<Holiday> holidays, List<CHECKINOUT> checkinouts, Period period, Overtime overtime, VacationInfo vacationInfo) {
+        String msg[] = {"", "", "", ""};
+        if (period == null) {
+            if (overtime == null) {
+                return msg;
+            } else {
+                msg[2] = String.valueOf(overtime.getLongTime());
+                return msg;
+            }
+        } else {
+
+        }
+        return null;
     }
 
     private Integer[] change(ScheduleInfo scheduleInfo) {
@@ -216,36 +244,6 @@ public class ExcelUtil {
         return str;
 
     }
-
-    //计算YY-MM-DD为星期几
-
-    public static String getWeekOfDate(String date) {
-        Date d = ChangeTime.parseStringToShortDate(date);
-        String[] weekOfDays = {"日", "一", "二", "三", "四", "五", "六"};
-        Calendar calendar = Calendar.getInstance();
-        if (date != null) {
-            calendar.setTime(d);
-        }
-        int w = calendar.get(Calendar.DAY_OF_WEEK) - 1;
-        if (w < 0) {
-            w = 0;
-        }
-        return weekOfDays[w];
-
-    }
-
-    //计算当前月天数
-    public int calDayByYearAndMonth(String dyear, String dmouth) {
-        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy/MM");
-        Calendar rightNow = Calendar.getInstance();
-        try {
-            rightNow.setTime(simpleDate.parse(dyear + "/" + dmouth));
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return rightNow.getActualMaximum(Calendar.DAY_OF_MONTH);//根据年月 获取月份天数
-    }
-
 
     /**
      * 导出对象到Excel，直接新建一个Excel完成导出，基于路径的导出，不基于模板
@@ -627,6 +625,25 @@ public class ExcelUtil {
         this.userInfoService = userInfoService;
     }
 
+    @Resource(name = "overTimeServiceImpl")
+    public void setOverTimeService(OverTimeService overTimeService) {
+        this.overTimeService = overTimeService;
+    }
+
+    @Resource(name = "vacationInfoServiceImpl")
+    public void setVacationInfoService(VacationInfoService vacationInfoService) {
+        this.vacationInfoService = vacationInfoService;
+    }
+
+    @Resource(name = "checkInOutServiceImpl")
+    public void setCheckInOutService(CheckInOutService checkInOutService) {
+        this.checkInOutService = checkInOutService;
+    }
+
+    @Resource(name = "holidayServiceImpl")
+    public void setHolidayService(HolidayService holidayService) {
+        this.holidayService = holidayService;
+    }
 
     private String matchNum(String str) {
         String regex = "\\d+";

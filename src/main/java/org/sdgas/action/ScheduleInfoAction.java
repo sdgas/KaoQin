@@ -146,6 +146,7 @@ public class ScheduleInfoAction extends MyActionSupport implements ModelDriven<S
                 break;
         }
         scheduleInfoService.update(scheduleInfo);
+        logger.info("管理员:" + user.getUserId() + "修改了员工：" + scheduleInfo.getUserinfo() + " " + scheduleVO.getDate() + "的排班信息。IP：" + ip);
         scheduleVO.setResultMessage("<script>alert('修改成功！');location.href='/page/scheduleInfo/apply.jsp';</script>");
         return SUCCESS;
     }

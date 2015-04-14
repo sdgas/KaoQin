@@ -1,16 +1,11 @@
 package org.sdgas.util;
 
-import com.opensymphony.xwork2.ActionContext;
-import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.struts2.ServletActionContext;
 import org.sdgas.base.PageIndex;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 public class WebTool {
 
@@ -38,36 +33,6 @@ public class WebTool {
             return Double.parseDouble(s.trim());
     }
 
-    /**
-     * 下载时调用的返回设置方法
-     *
-     * @param fileName    文件的名字
-     * @param contentType 文件类型
-     * @param ext         文件类型的后缀
-     */
-    public static void downloadFile(String fileName, String contentType,
-                                    String ext) {
-        Calendar cal = Calendar.getInstance();
-        int y = cal.get(Calendar.YEAR);
-        int m = cal.get(Calendar.MONTH) + 1;
-        int d = cal.get(Calendar.DATE);
-        int h = cal.get(Calendar.HOUR_OF_DAY);
-        int min = cal.get(Calendar.MINUTE);
-        int s = cal.get(Calendar.SECOND);
-        ActionContext context = ActionContext.getContext();
-        HttpServletResponse response = (HttpServletResponse) context
-                .get(ServletActionContext.HTTP_RESPONSE);
-        response.setContentType(contentType);
-        fileName = y + "-" + m + "-" + d + "-" + h + "-" + min + "-" + s
-                + fileName;
-        try {
-            fileName = URLEncoder.encode(fileName, "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        response.setHeader("Content-Disposition", "attachment;filename="
-                + fileName + "." + ext);
-    }
 
     /**
      * 页面分页功能的工具
@@ -87,5 +52,32 @@ public class WebTool {
             else startPage = 1;
         }
         return new PageIndex(startPage, endPage);
+    }
+
+    //计算YY-MM-DD为星期几
+    public static String getWeekOfDate(String date) {
+        Date d = ChangeTime.parseStringToShortDate(date);
+        String[] weekOfDays = {"日", "一", "二", "三", "四", "五", "六"};
+        Calendar calendar = Calendar.getInstance();
+        if (date != null) {
+            calendar.setTime(d);
+        }
+        int w = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        if (w < 0) {
+            w = 0;
+        }
+        return weekOfDays[w];
+    }
+
+    //计算当前月天数
+    public static int calDayByYearAndMonth(String dyear, String dmouth) {
+        SimpleDateFormat simpleDate = new SimpleDateFormat("yyyy/MM");
+        Calendar rightNow = Calendar.getInstance();
+        try {
+            rightNow.setTime(simpleDate.parse(dyear + "/" + dmouth));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return rightNow.getActualMaximum(Calendar.DAY_OF_MONTH);//根据年月 获取月份天数
     }
 }
