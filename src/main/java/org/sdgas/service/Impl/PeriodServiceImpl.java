@@ -35,4 +35,13 @@ public class PeriodServiceImpl extends DaoSupport<Period> implements PeriodServi
         }
         return flag == -1 ? periods.size() == 1 ? periods.get(0) : null : periods.get(flag);
     }
+
+    @Override
+    public List<Period> findByDep(int depId) {
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("depId", depId);
+        return this.findByFields(Period.class, params);
+    }
+
+
 }

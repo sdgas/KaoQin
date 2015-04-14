@@ -4,6 +4,7 @@
     <allow>
         <convert match="org.sdgas.model.DEPARTMENTS" converter="bean"/>
         <convert match="org.sdgas.model.Vacation" converter="bean"/>
+        <convert match="org.sdgas.model.Period" converter="bean"/>
 
         <create creator="spring" javascript="departmentService">
             <param name="beanName" value="departmentServiceImpl"/>
@@ -11,6 +12,10 @@
 
         <create creator="spring" javascript="vacationService">
             <param name="beanName" value="vacationServiceImpl"/>
+        </create>
+
+        <create creator="spring" javascript="periodService">
+            <param name="beanName" value="periodServiceImpl"/>
         </create>
 
     </allow>

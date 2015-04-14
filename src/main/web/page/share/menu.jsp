@@ -90,7 +90,7 @@
             </li>
             <li class="divider"></li>
             <li>
-                <a href="#">临时调班</a>
+                <a href="<%=basePath%>page/scheduleInfo/apply.jsp">临时调班</a>
             </li>
         </ul>
     </div>
@@ -103,6 +103,19 @@
         <ul class="dropdown-menu" role="menu">
             <li>
                 <a href="<%=basePath%>page/annualLeave/DataOperation.jsp">导入年假信息</a>
+            </li>
+
+        </ul>
+    </div>
+
+    <%--按钮56--%>
+    <div class="btn-group" style="margin-top: 10px;">
+        <button type="button" class="btn btn-default dropdown-toggle btn-primary" data-toggle="dropdown">
+            报表管理<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li>
+                <a href="File!createExcelBySch.action">生成月报表</a>
             </li>
 
         </ul>

@@ -9,6 +9,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.usermodel.*;
 import org.sdgas.model.DEPARTMENTS;
 import org.sdgas.model.Period;
+import org.sdgas.model.ScheduleInfo;
 import org.sdgas.model.USERINFO;
 import org.sdgas.service.DepartmentService;
 import org.sdgas.service.PeriodService;
@@ -62,15 +63,15 @@ public class ExcelUtil {
 
     private Workbook handleExcel(List objs, Class clz, boolean isXssf, String message, String dep) {
         XSSFWorkbook wb = new XSSFWorkbook();
-
+        int count = 0;
         XSSFSheet sheet = wb.createSheet("考勤月报表");   //取excel工作表对象
 
         List<ExcelHeader> headers = getHeaderList(clz);
         Collections.sort(headers);
 
         //合并单元格
-        sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 0, (short) (headers.size() + 9)));
-        Row r0 = sheet.createRow(0);
+        sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 0, (short) (headers.size() + 5)));
+        Row r0 = sheet.createRow(count);
         Cell cell = r0.createCell(0);
         r0.setHeightInPoints(28);
 
@@ -89,7 +90,7 @@ public class ExcelUtil {
         cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER); // 居中
         cell.setCellStyle(cellStyle);
 
-        Row r = sheet.createRow(1);
+        Row r = sheet.createRow(++count);
         r.setHeightInPoints(25);
 
         cellStyle = wb.createCellStyle();
@@ -108,7 +109,7 @@ public class ExcelUtil {
                 ++month;
         }
 
-        r = sheet.createRow(2);
+        r = sheet.createRow(++count);
         c = r.createCell(0);
         c.setCellStyle(cellStyle);
         c.setCellValue("姓名");
@@ -129,19 +130,91 @@ public class ExcelUtil {
 
         String type[] = {"病假天数", "事假天数", "补休小时", "加班小时", "出勤天数"};
         for (String tep : type) {
-            c = sheet.getRow(2).createCell(++i);
+            c = sheet.getRow(count).createCell(++i);
             c.setCellStyle(cs);
             c.setCellValue(tep);
         }
 
         c = sheet.getRow(1).createCell(++i);
+        cs.setAlignment(XSSFCellStyle.VERTICAL_CENTER);
         c.setCellStyle(cs);
         c.setCellValue("签名确认");
         sheet.addMergedRegion(new CellRangeAddress(1, (short) 2, i, (short) i));
-
         Object obj = null;
+        for (ScheduleInfo s : (List<ScheduleInfo>) objs) {
+            Integer sc[] = change(s);
+            USERINFO userinfo = userInfoService.find(USERINFO.class, s.getUserinfo());
+            r = sheet.createRow(++count);
+            c = r.createCell(0);
+            c.setCellStyle(cs);
+            c.setCellValue(userinfo.getNAME());
+
+            c = r.createCell(1);
+            c.setCellStyle(wb.createCellStyle());
+            c.setCellValue("上午");
+
+            r = sheet.createRow(++count);
+            c = r.createCell(1);
+            c.setCellStyle(wb.createCellStyle());
+            c.setCellValue("下午");
+
+            r = sheet.createRow(++count);
+            c = r.createCell(1);
+            c.setCellStyle(wb.createCellStyle());
+            c.setCellValue("补休");
+
+            r = sheet.createRow(++count);
+            c = r.createCell(1);
+            c.setCellStyle(wb.createCellStyle());
+            c.setCellValue("加班");
+
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 0, (short) 0));
+
+            for (int j = 0; j < 31; j++) {
+                int d = 21;
+                Period period = periodService.find(Period.class, sc[j]);
+                //todo
+            }
+        }
 
         return wb;
+    }
+
+    private Integer[] change(ScheduleInfo scheduleInfo) {
+        Integer str[] = new Integer[31];
+        str[0] = scheduleInfo.get_21st();
+        str[1] = scheduleInfo.get_22nd();
+        str[2] = scheduleInfo.get_23rd();
+        str[3] = scheduleInfo.get_24th();
+        str[4] = scheduleInfo.get_25th();
+        str[5] = scheduleInfo.get_26th();
+        str[6] = scheduleInfo.get_27th();
+        str[7] = scheduleInfo.get_28th();
+        str[8] = scheduleInfo.get_29th();
+        str[9] = scheduleInfo.get_30th();
+        str[10] = scheduleInfo.get_31st();
+        str[11] = scheduleInfo.get_1st();
+        str[12] = scheduleInfo.get_2nd();
+        str[13] = scheduleInfo.get_3rd();
+        str[14] = scheduleInfo.get_4th();
+        str[15] = scheduleInfo.get_5th();
+        str[16] = scheduleInfo.get_6th();
+        str[17] = scheduleInfo.get_7th();
+        str[18] = scheduleInfo.get_8th();
+        str[19] = scheduleInfo.get_9th();
+        str[20] = scheduleInfo.get_10th();
+        str[21] = scheduleInfo.get_11st();
+        str[22] = scheduleInfo.get_12nd();
+        str[23] = scheduleInfo.get_13rd();
+        str[24] = scheduleInfo.get_14th();
+        str[25] = scheduleInfo.get_15th();
+        str[26] = scheduleInfo.get_16th();
+        str[27] = scheduleInfo.get_17th();
+        str[28] = scheduleInfo.get_18th();
+        str[29] = scheduleInfo.get_19th();
+        str[30] = scheduleInfo.get_20th();
+        return str;
+
     }
 
     //计算YY-MM-DD为星期几

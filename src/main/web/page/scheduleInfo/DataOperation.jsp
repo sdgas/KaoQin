@@ -64,13 +64,6 @@
         <tr>
             <td><img src="#" alt="样例"></td>
         </tr>
-        <tr>
-            <td>
-                <form action="File!createExcelBySch.action" method="post">
-                    <input type="submit" value="生成">
-                </form>
-            </td>
-        </tr>
     </table>
 </div>
 <%@ include file="/page/share/footer.jsp" %>

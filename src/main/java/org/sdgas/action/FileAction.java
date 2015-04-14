@@ -248,8 +248,11 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
 
         Calendar cal = Calendar.getInstance();//使用日历类
         int year = cal.get(Calendar.YEAR);//得到年
-        int month = cal.get(Calendar.MONTH);//得到月，从0开始的
-        scheduleInfos = scheduleInfoService.findByDepAndDate(user.getDepId(), year + "" + month);
+        int month = cal.get(Calendar.MONTH) + 1;//得到月，从0开始的
+        if (month < 10)
+            scheduleInfos = scheduleInfoService.findByDepAndDate(user.getDepId(), year + "0" + month);
+        else
+            scheduleInfos = scheduleInfoService.findByDepAndDate(user.getDepId(), year + "" + month);
         /*if (scheduleInfos.size() <= 0) {
             fileVO.setResultMessage("考生信息为空！");
             return ERROR;

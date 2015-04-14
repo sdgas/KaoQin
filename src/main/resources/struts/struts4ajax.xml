@@ -1,16 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE struts PUBLIC
-    "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
-    "http://struts.apache.org/dtds/struts-2.0.dtd">
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
 <struts>
 
-	<!-- Ajax 部分 -->
-  <package name="ajax" extends="json-default">
-  	<global-results>
-  		<result name="success" type="json"/>
-  	</global-results>
-  	<action name="userInfoAjax" class="org.sdgas.ajax.UserInfoAjax" />
-	  <action name="departmentAjax" class="org.sdgas.ajax.DepartmentAjax" />
-  </package>
-  
+    <!-- Ajax 部分 -->
+    <package name="ajax" extends="json-default">
+        <global-results>
+            <result name="success" type="json"/>
+        </global-results>
+        <action name="userInfoAjax" class="org.sdgas.ajax.UserInfoAjax"/>
+        <action name="departmentAjax" class="org.sdgas.ajax.DepartmentAjax"/>
+        <action name="periodActionAjax" class="org.sdgas.ajax.PeriodActionAjax" />
+    </package>
+
 </struts>
