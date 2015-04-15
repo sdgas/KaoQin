@@ -23,6 +23,11 @@ public class Report {
     private String reportDate;
 
     /**
+     * 部门
+     */
+    private int dep;
+
+    /**
      * 报表名称
      */
     private String filePath;
@@ -53,5 +58,13 @@ public class Report {
 
     public void setFilePath(String filePath) {
         this.filePath = filePath;
+    }
+
+    public int getDep() {
+        return dep;
+    }
+
+    public void setDep(int dep) {
+        this.dep = dep;
     }
 }

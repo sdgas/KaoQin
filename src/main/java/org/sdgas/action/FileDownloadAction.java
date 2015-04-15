@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.sdgas.VO.FileVO;
 import org.sdgas.model.Report;
 import org.sdgas.service.ReportService;
+import org.sdgas.util.ChangeCharset;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
@@ -34,18 +35,22 @@ public class FileDownloadAction extends ActionSupport implements ModelDriven<Fil
     private static String SAVE_PATH_DIR = "D:/kaoqin/downloadFile/";
     private ReportService reportService;
 
+    private String contentType;
+    private String fileName;
+
     //返回一个输入流，作为一个客户端来说是一个输入流，但对于服务器端是一个 输出流
     public InputStream getDownloadFile() throws Exception {
 
         Report report = reportService.fineByFileName(fileVO.getPath());
-        String fileName = URLEncoder.encode(SAVE_PATH_DIR + fileVO.getPath(), "GB2312");
-        System.out.println(fileName);
-        File file= new File(fileName);
+        String path = SAVE_PATH_DIR + fileVO.getPath();
+        fileName = ChangeCharset.toGBK(fileVO.getPath());
+        File file = new File(ChangeCharset.toGBK(path));
         return new FileInputStream(file);
     }
 
     @Override
     public String execute() throws Exception {
+        this.contentType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8";
         return SUCCESS;
     }
 
@@ -57,5 +62,21 @@ public class FileDownloadAction extends ActionSupport implements ModelDriven<Fil
     @Resource(name = "reportServiceImpl")
     public void setReportService(ReportService reportService) {
         this.reportService = reportService;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }

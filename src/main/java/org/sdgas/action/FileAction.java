@@ -240,7 +240,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
         return SUCCESS;
     }
 
-
+    //生成月报表
     public String createExcelBySch() throws UnsupportedEncodingException {
         List<ScheduleInfo> scheduleInfos = new ArrayList<ScheduleInfo>();
         // 得到备份文件的目录的真实路径
@@ -282,14 +282,14 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
         String date = ChangeTime.formatDate(ChangeTime.getCurrentDate());
         String dep = departmentService.findByID(depId).getDEPTNAME();
         String fileName = date + dep + ".xlsx";
-        fileName = URLEncoder.encode(fileName, "UTF-8");
         String path = SAVE_PATH_DIR + fileName;
         //使用于07以上的版本，03以下的可以修改参数
-        excelUtil.exportExcelByPath(path, scheduleInfos, ScheduleInfo.class, true, date, dep);
+        excelUtil.exportExcelByPath(path, scheduleInfos, ScheduleInfo.class, false, date, dep);
 
         Report report = new Report();
         report.setFilePath(fileName);
         report.setReportDate(year + "" + (month > 10 ? month : "0" + month));
+        report.setDep(depId);
         reportService.save(report);
 
         logger.info("管理员：" + user.getUserId() + "成功生成考勤信息文件！文件名为:" + fileName);
