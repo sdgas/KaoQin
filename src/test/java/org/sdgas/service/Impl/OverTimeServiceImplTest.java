@@ -32,8 +32,8 @@ public class OverTimeServiceImplTest {
 
     @Test
     public void testFindByUserAndDate(){
-        overtime = overTimeService.findByUserAndDate(20378,"2015-04-06");
-        Assert.assertEquals(0,overtime.getLongTime());
+        overtime = overTimeService.findByUserAndDate(20214,"2015-04-02");
+        Assert.assertEquals(0,(int)2.5);
     }
 
 }

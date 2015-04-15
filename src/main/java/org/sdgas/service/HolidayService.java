@@ -18,5 +18,10 @@ public interface HolidayService extends DAO {
      */
     public Holiday findByName(String holiday);
 
+    /**
+     * @param before YYYY-MM-dd
+     * @param after  YYYY-MM-dd
+     * @return
+     */
     public List<Holiday> findByDate(String before, String after);
 }

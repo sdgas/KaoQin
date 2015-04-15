@@ -5,6 +5,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.sdgas.model.VacationInfo;
 import org.sdgas.service.VacationInfoService;
+import org.sdgas.util.WebTool;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,7 +33,7 @@ public class VacationInfoServiceImplTest {
 
     @Test
     public void testFindByUserAndDate(){
-        vacationInfo = vacationInfoService.findByUserAndDate(20214,"2015-04-22");
+        vacationInfo = vacationInfoService.findByUserAndDate(20211,"2015-03-23");
         Assert.assertEquals(null, vacationInfo);
     }
 

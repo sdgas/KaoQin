@@ -32,8 +32,8 @@ public class PeriodServiceImplTest {
 
     @Test
     public void testFindByDepAndSymbol(){
-        period = periodService.findByDepAndSymbol(6,"早","杏");
-        System.out.println(period.getPeriod());
+        period = periodService.find(Period.class,21);
+        System.out.println(period);
     }
 
 }

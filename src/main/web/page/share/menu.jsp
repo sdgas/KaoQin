@@ -115,7 +115,7 @@
         </button>
         <ul class="dropdown-menu" role="menu">
             <li>
-                <a href="File!createExcelBySch.action">生成月报表</a>
+                <a href="<%=basePath%>page/report/apply.jsp">生成月报表</a>
             </li>
 
         </ul>

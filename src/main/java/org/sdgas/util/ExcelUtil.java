@@ -17,11 +17,12 @@ import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA;
 
 
 /**
@@ -139,7 +140,7 @@ public class ExcelUtil {
         c.setCellStyle(cs);
         c.setCellValue("签名确认");
         sheet.addMergedRegion(new CellRangeAddress(1, (short) 2, i, (short) i));
-
+        int sick = 4;//病假取值范围
         for (ScheduleInfo s : (List<ScheduleInfo>) objs) {
             Integer sc[] = change(s);
             USERINFO userinfo = userInfoService.find(USERINFO.class, s.getUserinfo());
@@ -167,8 +168,44 @@ public class ExcelUtil {
             c.setCellStyle(wb.createCellStyle());
             c.setCellValue("加班");
 
+            //姓名列合并单元格
             sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 0, (short) 0));
 
+            //合计列合并单元格
+            c = sheet.getRow(count - 3).createCell(33);
+            c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+            String exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"B\")/2";
+            c.setCellFormula(exp);
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 33, (short) 33));//病假天数
+
+            c = sheet.getRow(count - 3).createCell(34);
+            c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+            exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"S\")/2";
+            c.setCellFormula(exp);
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 34, (short) 34));//事假天数
+
+
+            c = sheet.getRow(count - 3).createCell(35);
+            c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+            exp = "SUM(B" + count + ":AG" + count + ")";
+            c.setCellFormula(exp);
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 35, (short) 35));//补休小时
+
+
+            c = sheet.getRow(count - 3).createCell(36);
+            c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+            exp = "SUM(B" + (count + 1) + ":AG" + (count + 1) + ")";
+            c.setCellFormula(exp);
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 36, (short) 36));//加班小时
+
+
+            c = sheet.getRow(count - 3).createCell(37);
+            c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+            exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"√\")/2";
+            c.setCellFormula(exp);
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 37, (short) 37));//出勤天数
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 38, (short) 38));//签名确认
+            sick += 4;
             int d = 21;
             --month;
 
@@ -182,7 +219,7 @@ public class ExcelUtil {
                 //todo
                 String day = month > 10 ? year + "-" + month : year + "-0" + month;
                 List<CHECKINOUT> checkinouts = checkInOutService.findByUserAndDate(userinfo.getUSERID(), day, d);  //当日打卡情况
-                day = day + "-" + d;
+                day = d > 10 ? day + "-" + d : day + "-0" + d;
                 Overtime overtime = overTimeService.findByUserAndDate(Integer.valueOf(userinfo.getBADGENUMBER()), day); //当日加班情况
                 VacationInfo vacationInfo = vacationInfoService.findByUserAndDate(Integer.valueOf(userinfo.getBADGENUMBER()), day);  //当日休假情况
 
@@ -201,27 +238,51 @@ public class ExcelUtil {
                 r = sheet.getRow(count - 1);
                 c = r.createCell(num);
                 c.setCellStyle(wb.createCellStyle());
-                c.setCellValue(msg[2]);
+                if (!msg[2].trim().isEmpty())
+                    c.setCellValue(Double.valueOf(msg[2]));
 
                 r = sheet.getRow(count);
-                c = r.createCell(num++);
+                c = r.createCell(num);
                 c.setCellStyle(wb.createCellStyle());
-                c.setCellValue(msg[3]);
+                if (!msg[3].trim().isEmpty())
+                    c.setCellValue(Double.valueOf(msg[3]));
 
+                ++num;
                 int days = WebTool.calDayByYearAndMonth(year + "", month + "");
                 //下一个日期
-                if (d > days) {
+
+                if (d == days) {
                     d = 1;
                     month += 1;
                 } else d += 1;
             }
         }
 
+        r = sheet.createRow(count + 1);
+        c = r.createCell(0);
+        c.setCellStyle(wb.createCellStyle());
+        c.setCellValue("备注：加班以小时为单位 出勤√ 迟到★ 早退▲ 年假A 病假B 丧假C 婚假D 产假E 考试假F 补休G 陪产假H 事假S 工伤+  补休G  学习X ");
+
+        r = sheet.createRow(count + 2);
+        c = r.createCell(3);
+        c.setCellStyle(wb.createCellStyle());
+        c.setCellValue("制表人：");
+
+        c = r.createCell(7);
+        c.setCellStyle(wb.createCellStyle());
+        c.setCellValue("部门负责人：");
+
+        c = r.createCell(13);
+        c.setCellStyle(wb.createCellStyle());
+        c.setCellValue("分管领导审核：");
+        
         return wb;
     }
 
     private String[] just(List<Holiday> holidays, List<CHECKINOUT> checkinouts, Period period, Overtime overtime, VacationInfo vacationInfo) {
         String msg[] = {"", "", "", ""};
+        if (overtime != null)
+            msg[2] = String.valueOf(overtime.getLongTime());
         if (period == null) {
             if (overtime == null) {
                 return msg;
@@ -248,10 +309,21 @@ public class ExcelUtil {
                         msg[1] = "√";
                     else
                         msg[1] = "▲";
-                } else if (size == 1) {
-                    msg[0] = "异常";
-                    msg[1] = "异常";
-                } else if (size > 2) {
+                    if (vacationInfo != null) {
+                        if (0.5 == vacationInfo.getLongTime()) {
+                            if (vacationInfo.getRemarks().contains("上午"))
+                                msg[0] = vacationInfo.getVacationSymbol();
+                            else
+                                msg[1] = vacationInfo.getVacationSymbol();
+                        } else {
+                            msg[0] = vacationInfo.getVacationSymbol();
+                            msg[1] = vacationInfo.getVacationSymbol();
+                        }
+                        if ("G".equals(vacationInfo.getVacationSymbol())) {
+                            msg[3] = String.valueOf(vacationInfo.getLongTime());
+                        }
+                    }
+                } else {
                     for (CHECKINOUT checkinout : checkinouts) {
                         String date = ChangeTime.formatWholeDate(checkinout.getCHECKTIME()).substring(11, 19);
                         if (date.compareToIgnoreCase(periodCome) <= 0 && date.compareToIgnoreCase(periodGo) < 0) {
@@ -271,9 +343,41 @@ public class ExcelUtil {
                             msg[1] = "异常";
                         }
                     }
+                    if (vacationInfo != null) {
+                        if (0.5 == vacationInfo.getLongTime()) {
+                            if (vacationInfo.getRemarks().contains("上午"))
+                                msg[0] = vacationInfo.getVacationSymbol();
+                            else
+                                msg[1] = vacationInfo.getVacationSymbol();
+                        } else {
+                            msg[0] = vacationInfo.getVacationSymbol();
+                            msg[1] = vacationInfo.getVacationSymbol();
+                        }
+                        if ("G".equals(vacationInfo.getVacationSymbol())) {
+                            msg[3] = String.valueOf(vacationInfo.getLongTime());
+                        }
+                    }
                 }
             } else {
-
+                if (vacationInfo == null) {
+                    if (holidays.size() < 0) {
+                        msg[0] = "未上班/打卡";
+                        msg[1] = "未上班/打卡";
+                    }
+                } else {
+                    if (0.5 == vacationInfo.getLongTime()) {
+                        if (vacationInfo.getRemarks().contains("上午"))
+                            msg[0] = vacationInfo.getVacationSymbol();
+                        else
+                            msg[1] = vacationInfo.getVacationSymbol();
+                    } else {
+                        msg[0] = vacationInfo.getVacationSymbol();
+                        msg[1] = vacationInfo.getVacationSymbol();
+                    }
+                    if ("G".equals(vacationInfo.getVacationSymbol())) {
+                        msg[3] = String.valueOf(vacationInfo.getLongTime());
+                    }
+                }
             }
         }
         return msg;
@@ -324,6 +428,7 @@ public class ExcelUtil {
      * @param clz     对象类型
      * @param isXssf  是否是2007版本
      */
+
     public void exportExcelByPath(String outPath, List objs, Class clz, boolean isXssf, String message, String dep) {
         Workbook wb = handleExcel(objs, clz, isXssf, message, dep);
         FileOutputStream fos = null;
@@ -421,7 +526,7 @@ public class ExcelUtil {
             case Cell.CELL_TYPE_BOOLEAN:
                 o = String.valueOf(c.getBooleanCellValue());
                 break;
-            case Cell.CELL_TYPE_FORMULA:
+            case CELL_TYPE_FORMULA:
                 o = String.valueOf(c.getCellFormula());
                 break;
             case Cell.CELL_TYPE_NUMERIC:

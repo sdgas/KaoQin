@@ -65,7 +65,6 @@ public class Period {
         this.symbol = symbol;
     }
 
-    @Column(nullable = false)
     public int getDepId() {
         return depId;
     }

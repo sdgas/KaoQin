@@ -12,6 +12,15 @@ public class FileVO extends BaseVO {
     private String dbName;
     private String owner;
     private String path;
+    private String depS;
+
+    public String getDepS() {
+        return depS;
+    }
+
+    public void setDepS(String depS) {
+        this.depS = depS;
+    }
 
     public String getFileName() {
         return fileName;

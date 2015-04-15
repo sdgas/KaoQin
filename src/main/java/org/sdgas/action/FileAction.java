@@ -9,6 +9,7 @@ import org.sdgas.model.*;
 import org.sdgas.service.*;
 import org.sdgas.util.ChangeTime;
 import org.sdgas.util.ExcelUtil;
+import org.sdgas.util.WebTool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Scope;
@@ -249,22 +250,107 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
         Calendar cal = Calendar.getInstance();//使用日历类
         int year = cal.get(Calendar.YEAR);//得到年
         int month = cal.get(Calendar.MONTH) + 1;//得到月，从0开始的
-        if (month < 10)
-            scheduleInfos = scheduleInfoService.findByDepAndDate(user.getDepId(), year + "0" + month);
+
+        String tem[] = fileVO.getDepS().split(",");
+        int depId;
+        if (tem[1].trim().isEmpty())
+            depId = departmentService.findByDepName(tem[0]).getDEPTID();
         else
-            scheduleInfos = scheduleInfoService.findByDepAndDate(user.getDepId(), year + "" + month);
+            depId = departmentService.findByID(Integer.valueOf(tem[1].trim())).getDEPTID();
+
+        if (month < 10)
+            scheduleInfos = scheduleInfoService.findByDepAndDate(depId, year + "0" + month);
+        else
+            scheduleInfos = scheduleInfoService.findByDepAndDate(depId, year + "" + month);
+        // ScheduleInfo sc = scheduleInfoService.find(ScheduleInfo.class, 21);
+        List<USERINFO> userinfos = userInfoService.findByDep(depId);
+        for (USERINFO userinfo : userinfos) {
+            boolean flag = false;
+            for (ScheduleInfo scheduleInfo : scheduleInfos) {
+                if (scheduleInfo.getUserinfo() == userinfo.getUSERID())
+                    flag = true;
+            }
+            if (!flag || (depId != 10 && depId != 6)) {
+                ScheduleInfo scheduleInfo = createS(userinfo.getUSERID(), userinfo.getDEFAULTDEPTID(), year, month);
+                scheduleInfos.add(scheduleInfo);
+            }
+        }
+
         /*if (scheduleInfos.size() <= 0) {
             fileVO.setResultMessage("考生信息为空！");
             return ERROR;
         }*/
         String date = ChangeTime.formatDate(ChangeTime.getCurrentDate());
-        String dep = departmentService.findByID(user.getDepId()).getDEPTNAME();
+        String dep = departmentService.findByID(depId).getDEPTNAME();
         //使用于07以上的版本，03以下的可以修改参数
-        excelUtil.exportExcelByPath(SAVE_PATH_DIR + date + ".xlsx",
+        excelUtil.exportExcelByPath(SAVE_PATH_DIR + date + dep + ".xlsx",
                 scheduleInfos, ScheduleInfo.class, true, date, dep);
         //logger.info("成功备份考生信息文件！文件名为" + date);
         // fileVO.setResultMessage("成功备份考生信息文件！文件名为" + date);
         return SUCCESS;
+    }
+
+    private ScheduleInfo createS(int user, int dep, int year, int month) {
+        int days = WebTool.calDayByYearAndMonth(String.valueOf(year), String.valueOf(month));
+        ScheduleInfo scheduleInfo = new ScheduleInfo();
+
+        scheduleInfo.set_1st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-01"));
+        scheduleInfo.set_2nd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-02"));
+        scheduleInfo.set_3rd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-03"));
+        scheduleInfo.set_4th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-04"));
+        scheduleInfo.set_5th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-05"));
+        scheduleInfo.set_6th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-06"));
+        scheduleInfo.set_7th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-07"));
+        scheduleInfo.set_8th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-08"));
+        scheduleInfo.set_9th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-09"));
+        scheduleInfo.set_10th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-10"));
+        scheduleInfo.set_11st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-11"));
+        scheduleInfo.set_12nd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-12"));
+        scheduleInfo.set_13rd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-13"));
+        scheduleInfo.set_14th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-14"));
+        scheduleInfo.set_15th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-15"));
+        scheduleInfo.set_16th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-16"));
+        scheduleInfo.set_17th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-17"));
+        scheduleInfo.set_18th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-18"));
+        scheduleInfo.set_19th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-19"));
+        scheduleInfo.set_20th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-20"));
+        month = month - 1;
+        scheduleInfo.set_21st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-21"));
+        scheduleInfo.set_22nd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-22"));
+        scheduleInfo.set_23rd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-23"));
+        scheduleInfo.set_24th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-24"));
+        scheduleInfo.set_25th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-25"));
+        scheduleInfo.set_26th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-26"));
+        scheduleInfo.set_27th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-27"));
+        scheduleInfo.set_28th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-28"));
+        scheduleInfo.set_29th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-29"));
+        scheduleInfo.set_30th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-30"));
+        scheduleInfo.set_31st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-31"));
+
+        if (28 == days) {
+            scheduleInfo.set_29th(0);
+            scheduleInfo.set_30th(0);
+            scheduleInfo.set_31st(0);
+        } else if (29 == days) {
+            scheduleInfo.set_30th(0);
+            scheduleInfo.set_31st(0);
+        } else if (30 == days)
+            scheduleInfo.set_31st(0);
+        String before = year + "-" + (month > 10 ? month : "0" + month) + "-21";
+        month = month + 1;
+        String after = year + "-" + (month > 10 ? month : "0" + month) + "-20";
+
+        scheduleInfo.setDepId(dep);
+        scheduleInfo.setUserinfo(user);
+        scheduleInfo.setScheduleDate(year + "" + month);
+        return scheduleInfo;
+    }
+
+    private int getPeriodId(String date) {
+        if (WebTool.getWeekOfDate(date) == "六" || WebTool.getWeekOfDate(date) == "日")
+            return 0;
+        else
+            return 21;
     }
 
     @Resource(name = "holidayServiceImpl")
