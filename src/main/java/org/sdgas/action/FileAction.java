@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 import java.io.*;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -34,6 +35,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     private AnnualLeaveService annualLeaveService;
     private UserInfoService userInfoService;
     private DepartmentService departmentService;
+    private ReportService reportService;
 
     private final static Logger logger = LogManager.getLogger(FileAction.class);
     private final FileVO fileVO = new FileVO();
@@ -196,6 +198,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     }
 
 
+    //导入年假信息
     public String recoverExcelByAnnualLeave() {
         count = 0;
         num = 0;
@@ -238,7 +241,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     }
 
 
-    public String createExcelBySch() {
+    public String createExcelBySch() throws UnsupportedEncodingException {
         List<ScheduleInfo> scheduleInfos = new ArrayList<ScheduleInfo>();
         // 得到备份文件的目录的真实路径
         File dir = new File(SAVE_PATH_DIR);
@@ -276,17 +279,21 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
             }
         }
 
-        /*if (scheduleInfos.size() <= 0) {
-            fileVO.setResultMessage("考生信息为空！");
-            return ERROR;
-        }*/
         String date = ChangeTime.formatDate(ChangeTime.getCurrentDate());
         String dep = departmentService.findByID(depId).getDEPTNAME();
+        String fileName = date + dep + ".xlsx";
+        fileName = URLEncoder.encode(fileName, "UTF-8");
+        String path = SAVE_PATH_DIR + fileName;
         //使用于07以上的版本，03以下的可以修改参数
-        excelUtil.exportExcelByPath(SAVE_PATH_DIR + date + dep + ".xlsx",
-                scheduleInfos, ScheduleInfo.class, true, date, dep);
-        //logger.info("成功备份考生信息文件！文件名为" + date);
-        // fileVO.setResultMessage("成功备份考生信息文件！文件名为" + date);
+        excelUtil.exportExcelByPath(path, scheduleInfos, ScheduleInfo.class, true, date, dep);
+
+        Report report = new Report();
+        report.setFilePath(fileName);
+        report.setReportDate(year + "" + (month > 10 ? month : "0" + month));
+        reportService.save(report);
+
+        logger.info("管理员：" + user.getUserId() + "成功生成考勤信息文件！文件名为:" + fileName);
+        fileVO.setResultMessage("<script>alert('成功生成考勤信息文件:" + fileName + "。请点击确认下载');location.href='FileDownload.action?path=" + fileName + "';</script>");
         return SUCCESS;
     }
 
@@ -376,6 +383,11 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     @Resource(name = "departmentServiceImpl")
     public void setDepartmentService(DepartmentService departmentService) {
         this.departmentService = departmentService;
+    }
+
+    @Resource(name = "reportServiceImpl")
+    public void setReportService(ReportService reportService) {
+        this.reportService = reportService;
     }
 
     @Override
