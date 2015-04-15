@@ -97,6 +97,31 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
         }
     }
 
+    public String addAdmin() {
+
+        Administrators administrators = administratorsService.findById(Integer.valueOf(userVO.getUSERID()));
+        if (administrators != null) {
+            userVO.setResultMessage("<script>alert('该用户已存在');location.href='/page/user/administrator.jsp';</script>");
+            return ERROR;
+        }
+
+        if (userVO.getDepId().isEmpty()) {
+            userVO.setResultMessage("<script>alert('请选择部门');location.href='/page/user/administrator.jsp';</script>");
+            return ERROR;
+        }
+
+        administrators = new Administrators();
+
+        administrators.setDepId(Integer.valueOf(userVO.getDepId()));
+        administrators.setUserId(Integer.valueOf(userVO.getUSERID()));
+        administrators.setType(Integer.valueOf(userVO.getTypeS()));
+        administrators.setPwd(userVO.getPwd());
+
+        administratorsService.save(administrators);
+        userVO.setResultMessage("<script>alert('用户添加成功');location.href='/page/user/administrator.jsp';</script>");
+        return SUCCESS;
+    }
+
     @Override
     public UserInfoVO getModel() {
         return userVO;

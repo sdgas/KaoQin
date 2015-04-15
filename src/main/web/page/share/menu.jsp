@@ -26,7 +26,7 @@
         <c:if test="${session.person != null}">
             <%--<span style="font-family:'微软雅黑'; color: #000000; position: absolute;top: 3px;right: 18%;">欢迎 ${person.position.positionName}&nbsp&nbsp${person.userName}&nbsp--%>
 			<span style="font-family:'微软雅黑'; color: #000000;">欢迎
-				${person.userId}&nbsp; <a
+				${person.userName}&nbsp; <a
                         href="<%=basePath%>page/user/alterPwd.jsp">修改密码</a> <a
                         href="Login!loginOut.action">退出</a>
 			</span>
@@ -47,6 +47,10 @@
             <li class="divider"></li>
             <li>
                 <a href="<%=basePath%>page/user/alterPwd.jsp">修改账号密码</a>
+            </li>
+            <li class="divider"></li>
+            <li>
+                <a href="<%=basePath%>page/user/administrator.jsp">增加部门考勤员</a>
             </li>
         </ul>
     </div>

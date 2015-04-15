@@ -10,6 +10,15 @@ public class UserInfoVO extends BaseVO {
     private String pwd;
     private String pwd1;
     private String depId;
+    private String typeS;
+
+    public String getTypeS() {
+        return typeS;
+    }
+
+    public void setTypeS(String typeS) {
+        this.typeS = typeS;
+    }
 
     public String getUSERID() {
         return USERID;

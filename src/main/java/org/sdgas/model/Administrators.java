@@ -17,6 +17,11 @@ public class Administrators {
     private int userId;
 
     /**
+     * 用户名
+     */
+    private String userName;
+
+    /**
      * 密码
      */
     private String pwd;
@@ -63,5 +68,13 @@ public class Administrators {
 
     public void setDepId(int depId) {
         this.depId = depId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }
