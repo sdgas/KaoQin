@@ -281,7 +281,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
 
         String date = ChangeTime.formatDate(ChangeTime.getCurrentDate());
         String dep = departmentService.findByID(depId).getDEPTNAME();
-        String fileName = date + dep + ".xlsx";
+        String fileName = date  + ".xlsx";
         String path = SAVE_PATH_DIR + fileName;
         //使用于07以上的版本，03以下的可以修改参数
         excelUtil.exportExcelByPath(path, scheduleInfos, ScheduleInfo.class, false, date, dep);

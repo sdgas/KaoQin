@@ -43,8 +43,8 @@ public class FileDownloadAction extends ActionSupport implements ModelDriven<Fil
 
         Report report = reportService.fineByFileName(fileVO.getPath());
         String path = SAVE_PATH_DIR + fileVO.getPath();
-        fileName = ChangeCharset.toGBK(fileVO.getPath());
-        File file = new File(ChangeCharset.toGBK(path));
+        fileName = ChangeCharset.toUTF_8(fileVO.getPath());
+        File file = new File(ChangeCharset.toUTF_8(path));
         return new FileInputStream(file);
     }
 
