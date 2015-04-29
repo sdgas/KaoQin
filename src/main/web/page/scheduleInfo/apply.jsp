@@ -147,7 +147,6 @@
                 },
                 dataType: 'json',
                 success: function (data) {
-                    alert(data);
                     $("#va").val(data.msg)
                 }
             });

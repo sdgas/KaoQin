@@ -22,7 +22,7 @@ public class UserInfoAjax extends ActionSupport {
 
     private UserInfoService userInfoService;
 
-    private String userNames;
+    private String userName;
     private List<USERINFO> userinfos;
 
     private String userId;
@@ -31,7 +31,8 @@ public class UserInfoAjax extends ActionSupport {
     @Override
     public String execute() throws IOException {
         USERINFO userinfo = userInfoService.findById(userId);
-        userNames = userinfo.getNAME();
+        userName = userinfo.getNAME();
+        System.out.println(userName);
         return SUCCESS;
     }
 
@@ -45,8 +46,8 @@ public class UserInfoAjax extends ActionSupport {
         this.userInfoService = userInfoService;
     }
 
-    public String getUserNames() {
-        return userNames;
+    public String getUserName() {
+        return userName;
     }
 
     public void setUserId(String userId) {

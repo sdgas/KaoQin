@@ -42,14 +42,14 @@ public class UserInfoAction extends MyActionSupport implements ModelDriven<UserI
 
     @Override
     public String execute() {
-        USERINFO userinfo = userInfoService.findByName(userInfoVO.getName());
+        USERINFO userinfo = userInfoService.findById(userInfoVO.getUSERID());
         userinfo.setDEFAULTDEPTID(Integer.valueOf(userInfoVO.getDepId()));
         userInfoService.update(userinfo);
         DEPARTMENTS department = departmentService.findByID(Integer.valueOf(userInfoVO.getDepId()));
         logger.info("管理员：" + user.getUserId() + " 将用户" + userinfo.getNAME() + "的部门调整为"
                 + department.getDEPTNAME() + "。IP:" + ip);
         userInfoVO.setResultMessage("<script>alert('员工：" + userinfo.getNAME() + ",成功调整到"
-                + department.getDEPTNAME() + "');location.href='/page/user/person.jsp';</script>");
+                + department.getDEPTNAME() + "');location.href='/KaoQin/page/user/person.jsp';</script>");
         return SUCCESS;
     }
 

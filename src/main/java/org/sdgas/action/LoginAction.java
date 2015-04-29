@@ -33,7 +33,7 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
     //用户登录
     @Override
     public String execute() throws Exception {
-        if (userVO.getUSERID().isEmpty() || userVO.getPwd().isEmpty()) {
+        if (userVO.getUSERID().isEmpty() || userVO.getPwd().isEmpty() || !userVO.getUSERID().matches("\\d+")) {
             userVO.setResultMessage("<script>alert('请填写佛燃工号或密码！');location.href='login.jsp';</script>");
             return ERROR;
         }

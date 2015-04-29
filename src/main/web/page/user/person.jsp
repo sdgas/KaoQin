@@ -61,7 +61,11 @@
                 },
                 dataType: 'json',
                 success: function (data) {
-                    $("#userName").val(data.userNames[0]);
+                    $("#userName").val(data.userName);
+                },
+                error: function (data) {
+                    alert(data.userName);
+                    $("#userName").val(data.userName);
                 }
             });
         }
