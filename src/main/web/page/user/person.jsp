@@ -63,9 +63,8 @@
                 success: function (data) {
                     $("#userName").val(data.userName);
                 },
-                error: function (data) {
-                    alert(data.userName);
-                    $("#userName").val(data.userName);
+                error: function(XMLHttpRequest, textStatus, errorThrown){
+                    alert(errorThrown);
                 }
             });
         }

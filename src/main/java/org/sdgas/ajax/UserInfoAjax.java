@@ -1,15 +1,14 @@
 package org.sdgas.ajax;
 
 import com.opensymphony.xwork2.ActionSupport;
-import org.apache.struts2.ServletActionContext;
 import org.sdgas.model.USERINFO;
 import org.sdgas.service.UserInfoService;
+import org.sdgas.util.ChangeCharset;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -31,7 +30,7 @@ public class UserInfoAjax extends ActionSupport {
     @Override
     public String execute() throws IOException {
         USERINFO userinfo = userInfoService.findById(userId);
-        userName = userinfo.getNAME();
+        userName = ChangeCharset.toGBK(userinfo.getNAME());
         System.out.println(userName);
         return SUCCESS;
     }

@@ -104,9 +104,10 @@ public class ExcelUtil {
             c1.setCellStyle(cellStyle);
             String week = WebTool.getWeekOfDate(year + "-" + month + "-" + num);
             c1.setCellValue(week);
-
-            if (num == WebTool.calDayByYearAndMonth(year + "", month + ""))
+            if (num == WebTool.calDayByYearAndMonth(year + "", month + "")) {
                 ++month;
+                j++;
+            }
         }
 
         r = sheet.createRow(++count);
