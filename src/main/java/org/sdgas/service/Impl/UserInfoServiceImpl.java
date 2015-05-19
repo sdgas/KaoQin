@@ -37,6 +37,11 @@ public class UserInfoServiceImpl extends DaoSupport<USERINFO> implements UserInf
     public List<USERINFO> findByDep(int depId) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("DEFAULTDEPTID", depId);
-        return this.findByFields(USERINFO.class,params);
+        return this.findByFields(USERINFO.class, params);
+    }
+
+    @Override
+    public List<USERINFO> findAll() {
+        return this.find(USERINFO.class);
     }
 }

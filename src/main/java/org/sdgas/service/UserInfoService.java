@@ -19,7 +19,6 @@ public interface UserInfoService extends DAO {
     public USERINFO findByName(String name);
 
     /**
-     *
      * @param userId
      * @return
      */
@@ -27,9 +26,17 @@ public interface UserInfoService extends DAO {
 
     /**
      * 查找员工
+     *
      * @param depId 部门编号
      * @return 员工信息
      */
     public List<USERINFO> findByDep(int depId);
+
+    /**
+     * 查找全部员工
+     *
+     * @return 员工信息
+     */
+    public List<USERINFO> findAll();
 
 }

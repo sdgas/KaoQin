@@ -36,9 +36,15 @@
     <script src='<%=basePath%>dwr/util.js' type="text/javascript"></script>
     <script src='<%=basePath%>dwr/engine.js' type="text/javascript"></script>
     <script src='<%=basePath%>dwr/interface/departmentService.js' type="text/javascript"></script>
+    <script src='<%=basePath%>dwr/interface/userInfoService.js' type="text/javascript"></script>
+    <%--自动补全/模糊搜索--%>
+    <script type="text/javascript" src="<%=basePath%>js/jquery.js"></script>
+    <script type="text/javascript" src="<%=basePath%>js/jquery.autocomplete.js"></script>
+    <link rel="stylesheet" type="text/css" href="<%=basePath%>css/jquery.autocomplete.css"/>
     <script type="text/javascript">
         $(document).ready(function () {
             departmentService.findAll(getResult);
+            userInfoService.findAll(getUser);
         });
 
         function getResult(departments) {
@@ -46,29 +52,45 @@
                     + '---------请选择---------' + '</option>';
             for (var i = 0; i < departments.length; i++) {
                 select_list += '<option style="text-align: center" value="'
-                + departments[i].DEPTID + '">'
-                + departments[i].DEPTNAME + "</option>";
+                        + departments[i].DEPTID + '">'
+                        + departments[i].DEPTNAME + "</option>";
             }
             $("#dep").html(select_list);
         }
 
-        function getUser() {
-            $.ajax({
-                type: 'POST',
-                url: "userInfoAjax.action",
-                data: {
-                    userId: $("#userId").val()
+        function getUser(userInfos) {
+            //alert("DDD");
+            objects = []; //定义一个全局变量
+            for (var i = 0; i < userInfos.length; i++) {
+                objects[i] = {
+                    name: userInfos[i].BADGENUMBER + ":" + userInfos[i].NAME,
+                    value: userInfos[i].BADGENUMBER
+                };
+            }
+            //alert(objects);
+            // 模糊匹配
+            $(".research").autocomplete(objects, {
+                delay: 50,
+                minChars: 1, // 表示在自动完成激活之前填入的最小字符
+                max: 200, // 表示列表里的条目数
+                matchContains: true, // 表示包含匹配,相当于模糊匹配
+                scrollHeight: 200, // 表示列表显示高度,默认高度为180
+
+                formatItem: function (row) {
+                    return row.name;
                 },
-                dataType: 'json',
-                success: function (data) {
-                    $("#userName").val(data.userName);
+                formatMatch: function (row) {
+                    return row.name;
                 },
-                error: function(XMLHttpRequest, textStatus, errorThrown){
-                    alert(errorThrown);
+                formatResult: function (row) {
+                    return row.value;
                 }
+            }).result(function (event, data, formatted) {
+                alert(data.name);
+                alert(data.name.split(":")[1]);
+                $("#userName").val(data.name.split(":")[1]);
             });
         }
-
     </script>
 </head>
 <body>
@@ -83,7 +105,7 @@
             </tr>
             <tr>
                 <td>员工工号</td>
-                <td><input type="text" name="USERID" onchange="getUser()" id="userId"></td>
+                <td><input type="text" name="USERID" id="userId" class="research"></td>
             </tr>
             <tr>
                 <td>员工姓名:</td>
