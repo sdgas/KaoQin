@@ -61,6 +61,8 @@ public class ExcelUtil {
         return mn;
     }
 
+
+    //报表导出
     private Workbook handleExcel(List objs, Class clz, boolean isXssf, String message, String dep) {
         XSSFWorkbook wb = new XSSFWorkbook();
         int count = 0;
@@ -570,6 +572,7 @@ public class ExcelUtil {
         return o;
     }
 
+    //读取excel表格信息
     public List<Object> readExcel(Workbook wb, Class clz, int readLine, int tailLine) {
         Sheet sheet = wb.getSheetAt(0);     //取第一张表
         List<Object> objs = null;
@@ -688,7 +691,7 @@ public class ExcelUtil {
         return headers;
     }
 
-    //todo:读取年假信息
+    //读取年假信息
     public List<Object> readExcel_AnnualLeave(Workbook wb, Class clz, int readLine, int tailLine) {
         Sheet sheet = wb.getSheetAt(0);     //取第一张表
         List<Object> objs = null;

@@ -31,6 +31,11 @@ public class Holiday {
     private Date holidayBeginDate;
 
     /**
+     * 节假日日期
+     */
+    private Date holiday;
+
+    /**
      * 放假天数
      */
     private int longtime;
@@ -70,5 +75,14 @@ public class Holiday {
 
     public void setLongtime(int longtime) {
         this.longtime = longtime;
+    }
+
+    @ExcelResources(title = "节假日时间", order = 4)
+    public Date getHoliday() {
+        return holiday;
+    }
+
+    public void setHoliday(Date holiday) {
+        this.holiday = holiday;
     }
 }
