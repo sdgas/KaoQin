@@ -262,7 +262,7 @@ public class ExcelUtil {
         r = sheet.createRow(count + 1);
         c = r.createCell(0);
         c.setCellStyle(wb.createCellStyle());
-        c.setCellValue("备注：加班以小时为单位 出勤√ 迟到★ 早退▲ 年假A 病假B 丧假C 婚假D 产假E 考试假F 补休G 陪产假H 事假S 工伤+  补休G  学习X ");
+        c.setCellValue("备注：加班以小时为单位 出勤√ 迟到★ 早退▲ 年假A 病假B 丧假C 婚假D 产假E 未打卡F 补休G 陪产假H 事假S 工伤+ 补休G  学习X ");
 
         r = sheet.createRow(count + 2);
         c = r.createCell(3);
@@ -328,17 +328,17 @@ public class ExcelUtil {
                     for (CHECKINOUT checkinout : checkinouts) {
                         String date = ChangeTime.formatWholeDate(checkinout.getCHECKTIME()).substring(11, 19);
                         if (date.compareToIgnoreCase(periodCome) <= 0 && date.compareToIgnoreCase(periodGo) < 0) {
-                            msg[0] = msg[0] == "" || msg[0] == "未打卡" ? "√" : msg[0];
-                            msg[1] = msg[1] == "" || msg[1] == "未打卡" ? "未打卡" : msg[1];
+                            msg[0] = msg[0] == "" || msg[0] == "F" ? "√" : msg[0];
+                            msg[1] = msg[1] == "" || msg[1] == "F" ? "F" : msg[1];
                         } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) >= 0) {
-                            msg[1] = msg[1] == "" || msg[1] == "未打卡" ? "√" : msg[1];
-                            msg[0] = msg[0] == "" || msg[0] == "未打卡" ? "未打卡" : msg[0];
+                            msg[1] = msg[1] == "" || msg[1] == "F" ? "√" : msg[1];
+                            msg[0] = msg[0] == "" || msg[0] == "F" ? "F" : msg[0];
                         } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) < 0) {
-                            msg[0] = msg[0] == "" || msg[0] == "未打卡" ? "★" : msg[0];
-                            msg[1] = msg[1] == "" || msg[1] == "未打卡" ? "未打卡" : msg[1];
+                            msg[0] = msg[0] == "" || msg[0] == "F" ? "★" : msg[0];
+                            msg[1] = msg[1] == "" || msg[1] == "F" ? "F" : msg[1];
                         } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) < 0) {
-                            msg[0] = msg[0] == "" || msg[0] == "未打卡" ? "未打卡" : msg[0];
-                            msg[1] = msg[1] == "" || msg[1] == "未打卡" ? "▲" : msg[1];
+                            msg[0] = msg[0] == "" || msg[0] == "F" ? "F" : msg[0];
+                            msg[1] = msg[1] == "" || msg[1] == "F" ? "▲" : msg[1];
                         } else {
                             msg[0] = "异常";
                             msg[1] = "异常";
