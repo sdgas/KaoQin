@@ -132,6 +132,8 @@
                         formatResult: function (row) {
                             return row.value;
                         }
+                    }).result(function (event, data, formatted) {
+                        $("#userName").val(data.name.split(":")[1]);
                     });
                 }
             });
@@ -172,9 +174,15 @@
                 </td>
             </tr>
             <tr>
-                <td>员工：</td>
+                <td>员工编号：</td>
                 <td>
                     <input type="text" name="staffId" id="staffId" onclick="getData()">
+                </td>
+            </tr>
+            <tr>
+                <td>员工姓名：</td>
+                <td>
+                    <input type="text" name="" id="userName" readonly="readonly">
                 </td>
             </tr>
             <tr>

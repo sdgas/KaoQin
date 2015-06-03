@@ -67,7 +67,6 @@
                     value: userInfos[i].BADGENUMBER
                 };
             }
-            //alert(objects);
             // 模糊匹配
             $(".research").autocomplete(objects, {
                 delay: 50,
@@ -86,8 +85,6 @@
                     return row.value;
                 }
             }).result(function (event, data, formatted) {
-                alert(data.name);
-                alert(data.name.split(":")[1]);
                 $("#userName").val(data.name.split(":")[1]);
             });
         }
@@ -104,7 +101,7 @@
                 </td>
             </tr>
             <tr>
-                <td>员工工号</td>
+                <td>员工工号:</td>
                 <td><input type="text" name="USERID" id="userId" class="research"></td>
             </tr>
             <tr>

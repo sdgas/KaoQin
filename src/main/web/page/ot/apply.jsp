@@ -69,8 +69,8 @@
                     + '---------请选择---------' + '</option>';
             for (var i = 0; i < departments.length; i++) {
                 select_list += '<option style="text-align: center" value="'
-                + departments[i].DEPTID + '">'
-                + departments[i].DEPTNAME + "</option>";
+                        + departments[i].DEPTID + '">'
+                        + departments[i].DEPTNAME + "</option>";
             }
             $("#depS").html(select_list);
         }
@@ -116,6 +116,8 @@
                         formatResult: function (row) {
                             return row.value;
                         }
+                    }).result(function (event, data, formatted) {
+                        $("#userName").val(data.name.split(":")[1]);
                     });
                 }
             });
@@ -141,9 +143,15 @@
                 </td>
             </tr>
             <tr>
-                <td>员工：</td>
+                <td>员工编号：</td>
                 <td>
                     <input type="text" name="userinfo" id="staffId" onclick="getData()">
+                </td>
+            </tr>
+            <tr>
+                <td>员工姓名：</td>
+                <td>
+                    <input type="text" name="" id="userName" readonly="readonly">
                 </td>
             </tr>
             <tr>
