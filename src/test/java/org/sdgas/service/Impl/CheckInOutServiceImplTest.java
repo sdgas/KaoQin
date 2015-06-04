@@ -35,7 +35,7 @@ public class CheckInOutServiceImplTest {
 
     @Test
     public void testFindByUserAndDate(){
-        checkinouts = checkInOutService.findByUserAndDate(29,"2015-03",22);
+        checkinouts = checkInOutService.findByUserAndDate(52,"2015-06",2);
         //Assert.assertEquals(2,checkinouts.size());
         System.out.println(checkinouts.size());
         for (CHECKINOUT checkinout : checkinouts) System.out.println(checkinout.getCHECKTIME());

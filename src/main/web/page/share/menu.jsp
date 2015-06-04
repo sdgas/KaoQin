@@ -11,9 +11,8 @@
 <div id="head_line"></div>
 <div id="head" style="width: 1050px">
 
-    <a href="index.jsp" style="border: none;"> <img
-            src="<%=basePath%>img/logo.bmp"
-            style="border: none;margin-right: 10px;width: 300px;height: 80px;"/>
+    <a href="index.jsp" style="border: none;">
+        <img src="<%=basePath%>img/logo.bmp" style="border: none;margin-right: 10px;width: 150px;height: 80px;"/>
     </a>
 
     <div style="width:400px;margin-top: 20px;margin-bottom: 0px;margin-left:340px;text-align: right">
@@ -120,6 +119,18 @@
         <ul class="dropdown-menu" role="menu">
             <li>
                 <a href="<%=basePath%>page/report/apply.jsp">生成月报表</a>
+            </li>
+        </ul>
+    </div>
+
+    <%--按钮57--%>
+    <div class="btn-group" style="margin-top: 10px;">
+        <button type="button" class="btn btn-default dropdown-toggle btn-primary" data-toggle="dropdown">
+            打卡记录管理<span class="caret"></span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+            <li>
+                <a href="<%=basePath%>page/search/searchDetail.jsp">打卡明细查询</a>
             </li>
 
         </ul>
