@@ -10,6 +10,7 @@ import org.sdgas.service.CheckInOutService;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
 /**
@@ -30,11 +31,16 @@ public class CheckInOutAction extends MyActionSupport implements ModelDriven<Che
     String ip = (String) session.getAttribute("ip");
 
     @Override
+    public String execute() {
+        return SUCCESS;
+    }
+
+    @Override
     public CheckInOutVO getModel() {
         return checkInOutVO;
     }
 
-
+    @Resource(name = "checkInOutServiceImpl")
     public void setCheckInOutService(CheckInOutService checkInOutService) {
         this.checkInOutService = checkInOutService;
     }

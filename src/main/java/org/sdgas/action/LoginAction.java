@@ -114,6 +114,7 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
 
         administrators.setDepId(Integer.valueOf(userVO.getDepId()));
         administrators.setUserId(Integer.valueOf(userVO.getUSERID()));
+        administrators.setUserName(userVO.getName());
         administrators.setType(Integer.valueOf(userVO.getTypeS()));
         administrators.setPwd(userVO.getPwd());
 
