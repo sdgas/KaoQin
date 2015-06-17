@@ -101,12 +101,12 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
 
         Administrators administrators = administratorsService.findById(Integer.valueOf(userVO.getUSERID()));
         if (administrators != null) {
-            userVO.setResultMessage("<script>alert('该用户已存在');location.href='/page/user/administrator.jsp';</script>");
+            userVO.setResultMessage("<script>alert('该用户已存在');location.href='/KaoQin/page/user/administrator.jsp';</script>");
             return ERROR;
         }
 
         if (userVO.getDepId().isEmpty()) {
-            userVO.setResultMessage("<script>alert('请选择部门');location.href='/page/user/administrator.jsp';</script>");
+            userVO.setResultMessage("<script>alert('请选择部门');location.href='/KaoQin/page/user/administrator.jsp';</script>");
             return ERROR;
         }
 
@@ -118,7 +118,7 @@ public class LoginAction extends MyActionSupport implements ModelDriven<UserInfo
         administrators.setPwd(userVO.getPwd());
 
         administratorsService.save(administrators);
-        userVO.setResultMessage("<script>alert('用户添加成功');location.href='/page/user/administrator.jsp';</script>");
+        userVO.setResultMessage("<script>alert('用户添加成功');location.href='/KaoQin/page/user/administrator.jsp';</script>");
         return SUCCESS;
     }
 

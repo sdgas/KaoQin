@@ -131,24 +131,29 @@
     <form action="#" method="post">
         <table>
             <tr>
-                <td colspan="10" align="center">
+                <td colspan="12" align="center">
                     <span style="font-size: x-large">打卡明细查询</span>
                 </td>
             </tr>
             <tr>
-                <td style="width: 50px">部门：</td>
+                <td style="width: 150px">部门：</td>
                 <td>
                     <input readonly="readonly" type="text" id="dep">
                     <select id="depS" style="width: 100px;font-family: '微软雅黑';font-size: 16px;display: none"
                             onchange="getData()"></select>
                 </td>
-                <td style="width: 90px">员工编号：</td>
+                <td style="width: 200px">员工编号：</td>
                 <td>
                     <input type="text" name="staffId" id="staffId" style="width: 100px" onclick="getData()">
                 </td>
-                <td style="width: 90px">员工姓名：</td>
+                <td style="width: 200px">员工姓名：</td>
                 <td>
                     <input type="text" name="" id="userName" readonly="readonly" style="width: 100px">
+                </td>
+                <td style="width: 200px">查询时间：</td>
+                <td>
+                    <input type="text" name="month" class="Wdate"
+                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月'})" style="width: 120px"/>
                 </td>
                 <td align="center" style="width: 80px">
                     <input type="submit" value="查询">

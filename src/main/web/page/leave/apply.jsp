@@ -46,6 +46,10 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
+            if (${person.type==0}) {
+                $("#dep").css("display", "none");
+                $("#depS").css("display", "");
+            }
             $.ajax({
                 type: 'POST',
                 url: "departmentAjax.action",
@@ -57,13 +61,9 @@
                     $("#dep").val(data.depName)
                 }
             });
+            getData();
             departmentService.findAll(getResult);
             vacationService.findAll(getVacation);
-
-            if (${person.type==0}) {
-                $("#dep").css("display", "none");
-                $("#depS").css("display", "");
-            }
         });
 
         function getVacation(vacations) {
@@ -71,8 +71,8 @@
                     + '---------请选择---------' + '</option>';
             for (var i = 0; i < vacations.length; i++) {
                 select_list += '<option style="text-align: center" value="'
-                + vacations[i].symbol + '">'
-                + vacations[i].vacation + "</option>";
+                        + vacations[i].symbol + '">'
+                        + vacations[i].vacation + "</option>";
             }
             $("#va").html(select_list);
         }
@@ -82,8 +82,8 @@
                     + '---------请选择---------' + '</option>';
             for (var i = 0; i < departments.length; i++) {
                 select_list += '<option style="text-align: center" value="'
-                + departments[i].DEPTID + '">'
-                + departments[i].DEPTNAME + "</option>";
+                        + departments[i].DEPTID + '">'
+                        + departments[i].DEPTNAME + "</option>";
             }
             $("#depS").html(select_list);
         }

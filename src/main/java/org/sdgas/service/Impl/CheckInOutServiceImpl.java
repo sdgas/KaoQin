@@ -29,4 +29,9 @@ public class CheckInOutServiceImpl extends DaoSupport<CHECKINOUT> implements Che
         query.setParameter(3, two);
         return query.getResultList();
     }
+
+    @Override
+    public List<CHECKINOUT> findByUserAndMonth(int userId, String ym) {
+        return null;
+    }
 }
