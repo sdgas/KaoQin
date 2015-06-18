@@ -61,8 +61,55 @@ public class ExcelUtil {
         return mn;
     }
 
+    //中晚班补贴报表
+    public void createExcel(String dep,String outPath) {
+        XSSFWorkbook wb = new XSSFWorkbook();
+        XSSFSheet sheet = wb.createSheet("中晚班补贴");   //取excel工作表对象
 
-    //报表导出
+        //合并单元格
+        sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 0, (short) 5));
+        Row r0 = sheet.createRow(0);
+        Cell cell = r0.createCell(0);
+        r0.setHeightInPoints(28);
+
+        Calendar cal = Calendar.getInstance();//使用日历类
+        int year = cal.get(Calendar.YEAR);//得到年
+        int month = cal.get(Calendar.MONTH) + 1;//得到月，从0开始的
+
+        cell.setCellValue("佛山市顺德区港华燃气有限公司" + year + "年" + month + "月 " + dep + "中晚班补贴");
+        XSSFFont font = wb.createFont();
+        font.setFontHeightInPoints((short) 20); // 字体高度
+        font.setFontName("宋体"); // 字体
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); // 宽度
+
+        XSSFCellStyle cellStyle = wb.createCellStyle(); //设置excel单元格样式
+        cellStyle.setFont(font);
+        cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER); // 居中
+        cell.setCellStyle(cellStyle);
+
+        //创建excel，并保存
+        FileOutputStream fos = null;
+        try {
+            fos = new FileOutputStream(outPath);
+            wb.toString().getBytes("GB2312");
+            wb.write(fos);
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            logger.error(e);
+        } catch (IOException e) {
+            e.printStackTrace();
+            logger.error(e);
+        } finally {
+            try {
+                if (fos != null) fos.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                logger.error(e);
+            }
+        }
+    }
+
+    //考勤报表导出
     private Workbook handleExcel(List objs, Class clz, boolean isXssf, String message, String dep) {
         XSSFWorkbook wb = new XSSFWorkbook();
         int count = 0;
@@ -131,7 +178,7 @@ public class ExcelUtil {
         c.setCellValue("合计");
         sheet.addMergedRegion(new CellRangeAddress(1, (short) 1, i + 1, (short) i + 5));
 
-        String type[] = {"病假天数", "事假天数", "补休小时", "加班小时", "出勤天数"};
+        String type[] = {"病假天数", "事假天数", "补休小时", "平时加班","周末加班","假日加班", "出勤天数"};
         for (String tep : type) {
             c = sheet.getRow(count).createCell(++i);
             c.setCellStyle(cs);

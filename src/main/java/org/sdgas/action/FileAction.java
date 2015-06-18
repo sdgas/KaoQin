@@ -49,6 +49,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     private static String SAVE_PATH_DIR_S = "D:/kaoqin/uploadFile/Schedule/";
     private static String SAVE_PATH_DIR_A = "D:/kaoqin/uploadFile/annualLeave/";
     private static String SAVE_PATH_DIR = "D:/kaoqin/downloadFile/";
+    private static String SAVE_PATH_DIR_B = "D:/kaoqin/uploadFile/Subsidy";
 
     //获取当前登录用户
     HttpSession session = ServletActionContext.getRequest().getSession();
@@ -294,6 +295,26 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
         reportService.save(report);
 
         logger.info("管理员：" + user.getUserId() + "成功生成考勤信息文件！文件名为:" + fileName);
+        fileVO.setResultMessage("<script>alert('成功生成考勤信息文件:" + fileName + "。请点击确认下载');location.href='FileDownload.action?path=" + fileName + "';</script>");
+        return SUCCESS;
+    }
+
+    //生成补贴
+    public String ceeateSubsidy() throws UnsupportedEncodingException {
+        // 得到备份文件的目录的真实路径
+        File dir = new File(SAVE_PATH_DIR_B);
+        // 如果该目录不存在，就创建
+        if (!dir.exists()) {
+            dir.mkdirs();
+        }
+
+        String date = ChangeTime.formatDate(ChangeTime.getCurrentDate());
+        String fileName = date + ".xlsx";
+        String path = SAVE_PATH_DIR + fileName;
+        //使用于07以上的版本，03以下的可以修改参数
+        excelUtil.createExcel(fileVO.getDepS(), path);
+
+        logger.info("管理员：" + user.getUserId() + "成功生成中晚班补贴文件！文件名为:" + fileName);
         fileVO.setResultMessage("<script>alert('成功生成考勤信息文件:" + fileName + "。请点击确认下载');location.href='FileDownload.action?path=" + fileName + "';</script>");
         return SUCCESS;
     }
