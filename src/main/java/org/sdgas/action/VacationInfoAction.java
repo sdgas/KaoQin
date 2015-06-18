@@ -6,7 +6,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
 import org.sdgas.VO.VacationInfoVO;
 import org.sdgas.model.Administrators;
+import org.sdgas.model.USERINFO;
 import org.sdgas.model.VacationInfo;
+import org.sdgas.service.UserInfoService;
 import org.sdgas.service.VacationInfoService;
 import org.sdgas.util.ChangeTime;
 import org.springframework.context.annotation.Scope;
@@ -24,8 +26,9 @@ public class VacationInfoAction extends MyActionSupport implements ModelDriven<V
 
     private VacationInfoVO vacationInfoVO = new VacationInfoVO();
     private VacationInfoService vacationInfoService;
+    private UserInfoService userInfoService;
 
-    private static final Logger logger = LogManager.getLogger(UserInfoAction.class);
+    private static final Logger logger = LogManager.getLogger(VacationInfoAction.class);
 
     //获取当前登录用户信息
     HttpSession session = ServletActionContext.getRequest().getSession();
@@ -34,8 +37,13 @@ public class VacationInfoAction extends MyActionSupport implements ModelDriven<V
 
     @Override
     public String execute() {
+        USERINFO userinfo = userInfoService.findByName(vacationInfoVO.getStaff());
+        if(userinfo == null){
+            vacationInfoVO.setResultMessage("<script>alert('找不到该用户！');location.href='/KaoQin/page/leave/apply.jsp';</script>");
+            return ERROR;
+        }
         VacationInfo vacationInfo = new VacationInfo();
-        vacationInfo.setUserinfo(Integer.valueOf(vacationInfoVO.getStaffId()));
+        vacationInfo.setUserinfo(userinfo.getUSERID());
         vacationInfo.setBeginDate(ChangeTime.parseStringToShortDate(vacationInfoVO.getBegin()));
         vacationInfo.setEndDate(ChangeTime.parseStringToShortDate(vacationInfoVO.getEnd()));
         vacationInfo.setLongTime(Double.valueOf(vacationInfoVO.getLongTime()));
@@ -60,5 +68,10 @@ public class VacationInfoAction extends MyActionSupport implements ModelDriven<V
     @Resource(name = "vacationInfoServiceImpl")
     public void setVacationInfoService(VacationInfoService vacationInfoService) {
         this.vacationInfoService = vacationInfoService;
+    }
+
+    @Resource(name = "userInfoServiceImpl")
+    public void setUserInfoService(UserInfoService userInfoService) {
+        this.userInfoService = userInfoService;
     }
 }

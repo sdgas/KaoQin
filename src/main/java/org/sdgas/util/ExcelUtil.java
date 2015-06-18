@@ -223,8 +223,8 @@ public class ExcelUtil {
                 String day = month > 10 ? year + "-" + month : year + "-0" + month;
                 List<CHECKINOUT> checkinouts = checkInOutService.findByUserAndDate(userinfo.getUSERID(), day, d);  //当日打卡情况
                 day = d > 10 ? day + "-" + d : day + "-0" + d;
-                Overtime overtime = overTimeService.findByUserAndDate(Integer.valueOf(userinfo.getBADGENUMBER()), day); //当日加班情况
-                VacationInfo vacationInfo = vacationInfoService.findByUserAndDate(Integer.valueOf(userinfo.getBADGENUMBER()), day);  //当日休假情况
+                Overtime overtime = overTimeService.findByUserAndDate(userinfo.getUSERID(), day); //当日加班情况
+                VacationInfo vacationInfo = vacationInfoService.findByUserAndDate(userinfo.getUSERID(), day);  //当日休假情况
 
                 String msg[] = just(holidays, checkinouts, period, overtime, vacationInfo);
 

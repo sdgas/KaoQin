@@ -74,54 +74,6 @@
             }
             $("#depS").html(select_list);
         }
-
-        function getData() {
-            objects = []; //定义一个全局变量
-            var depId;
-            if (${person.type==0}) {
-                depId = $("#depS option:selected").val();
-            }
-            else
-                depId = ${person.depId};
-
-            $.ajax({
-                type: 'POST',
-                url: "userInfoAjax!getUserInfo.action",
-                data: {
-                    dep: depId
-                },
-                dataType: 'json',
-                success: function (data) {
-                    // 组装json数据源对象objects
-                    for (var i = 0; i < data.userinfos.length; i++) {
-                        objects[i] = {
-                            name: data.userinfos[i].BADGENUMBER + ":" + data.userinfos[i].NAME,
-                            value: data.userinfos[i].BADGENUMBER
-                        };
-                    }
-                    // 模糊匹配
-                    $("#staffId").autocomplete(objects, {
-                        delay: 50,
-                        minChars: 1, // 表示在自动完成激活之前填入的最小字符
-                        max: 200, // 表示列表里的条目数
-                        matchContains: true, // 表示包含匹配,相当于模糊匹配
-                        scrollHeight: 200, // 表示列表显示高度,默认高度为180
-
-                        formatItem: function (row) {
-                            return row.name;
-                        },
-                        formatMatch: function (row) {
-                            return row.name;
-                        },
-                        formatResult: function (row) {
-                            return row.value;
-                        }
-                    }).result(function (event, data, formatted) {
-                        $("#userName").val(data.name.split(":")[1]);
-                    });
-                }
-            });
-        }
     </script>
 </head>
 <body>
@@ -138,20 +90,13 @@
                 <td>部门：</td>
                 <td>
                     <input readonly="readonly" type="text" id="dep">
-                    <select id="depS" style="font-family: '微软雅黑';font-size: 16px;display: none"
-                            onchange="getData()"></select>
-                </td>
-            </tr>
-            <tr>
-                <td>员工编号：</td>
-                <td>
-                    <input type="text" name="userinfo" id="staffId" onclick="getData()">
+                    <select id="depS" style="font-family: '微软雅黑';font-size: 16px;display: none"></select>
                 </td>
             </tr>
             <tr>
                 <td>员工姓名：</td>
                 <td>
-                    <input type="text" name="" id="userName" readonly="readonly">
+                    <input type="text" name="userinfo" id="userName">
                 </td>
             </tr>
             <tr>

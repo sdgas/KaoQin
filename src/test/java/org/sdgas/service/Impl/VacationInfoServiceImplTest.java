@@ -33,7 +33,7 @@ public class VacationInfoServiceImplTest {
 
     @Test
     public void testFindByUserAndDate(){
-        vacationInfo = vacationInfoService.findByUserAndDate(20211,"2015-03-23");
+        vacationInfo = vacationInfoService.findByUserAndDate(62,"2015-05-21");
         Assert.assertEquals(null, vacationInfo);
     }
 

@@ -7,15 +7,24 @@ import java.util.Date;
  */
 public class CheckInOutVO extends BaseVO {
 
-    private int USERID;
+    private String userInfo;
+    private String month;
     private String CHECKTIME;
 
-    public int getUSERID() {
-        return USERID;
+    public String getMonth() {
+        return month;
     }
 
-    public void setUSERID(int USERID) {
-        this.USERID = USERID;
+    public void setMonth(String month) {
+        this.month = month;
+    }
+
+    public String getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(String userInfo) {
+        this.userInfo = userInfo;
     }
 
     public String getCHECKTIME() {

@@ -5,7 +5,8 @@ package org.sdgas.VO;
  */
 public class VacationInfoVO extends BaseVO {
 
-    private String staffId;
+    private String staff;
+    private String depId;
     private String vacationId;
     private String begin;
     private String end;
@@ -13,12 +14,20 @@ public class VacationInfoVO extends BaseVO {
     private String remarks;
     private String remarks2;
 
-    public String getStaffId() {
-        return staffId;
+    public String getDepId() {
+        return depId;
     }
 
-    public void setStaffId(String staffId) {
-        this.staffId = staffId;
+    public void setDepId(String depId) {
+        this.depId = depId;
+    }
+
+    public String getStaff() {
+        return staff;
+    }
+
+    public void setStaff(String staff) {
+        this.staff = staff;
     }
 
     public String getVacationId() {

@@ -75,60 +75,12 @@
             $("#depS").html(select_list);
         }
 
-        function getData() {
-            objects = []; //定义一个全局变量
-            var depId;
-            if (${person.type==0}) {
-                depId = $("#depS option:selected").val();
-            }
-            else
-                depId = ${person.depId};
-
-            $.ajax({
-                type: 'POST',
-                url: "userInfoAjax!getUserInfo.action",
-                data: {
-                    dep: depId
-                },
-                dataType: 'json',
-                success: function (data) {
-                    // 组装json数据源对象objects
-                    for (var i = 0; i < data.userinfos.length; i++) {
-                        objects[i] = {
-                            name: data.userinfos[i].BADGENUMBER + ":" + data.userinfos[i].NAME,
-                            value: data.userinfos[i].BADGENUMBER
-                        };
-                    }
-
-                    // 模糊匹配
-                    $("#staffId").autocomplete(objects, {
-                        delay: 50,
-                        minChars: 1, // 表示在自动完成激活之前填入的最小字符
-                        max: 200, // 表示列表里的条目数
-                        matchContains: true, // 表示包含匹配,相当于模糊匹配
-                        scrollHeight: 200, // 表示列表显示高度,默认高度为180
-
-                        formatItem: function (row) {
-                            return row.name;
-                        },
-                        formatMatch: function (row) {
-                            return row.name;
-                        },
-                        formatResult: function (row) {
-                            return row.value;
-                        }
-                    }).result(function (event, data, formatted) {
-                        $("#userName").val(data.name.split(":")[1]);
-                    });
-                }
-            });
-        }
     </script>
 </head>
 <body>
 <%@ include file="/page/share/menu.jsp" %>
 <div id="content">
-    <form action="#" method="post">
+    <form action="#" method="post" onsubmit="comfer()">
         <table>
             <tr>
                 <td colspan="12" align="center">
@@ -136,21 +88,17 @@
                 </td>
             </tr>
             <tr>
-                <td style="width: 150px">部门：</td>
+                <td style="width: 90px">部门：</td>
                 <td>
                     <input readonly="readonly" type="text" id="dep">
                     <select id="depS" style="width: 100px;font-family: '微软雅黑';font-size: 16px;display: none"
                             onchange="getData()"></select>
                 </td>
-                <td style="width: 200px">员工编号：</td>
+                <td style="width: 120px">员工姓名：</td>
                 <td>
-                    <input type="text" name="staffId" id="staffId" style="width: 100px" onclick="getData()">
+                    <input type="text" name="userInfo" id="userName" style="width: 100px">
                 </td>
-                <td style="width: 200px">员工姓名：</td>
-                <td>
-                    <input type="text" name="" id="userName" readonly="readonly" style="width: 100px">
-                </td>
-                <td style="width: 200px">查询时间：</td>
+                <td style="width: 120px">查询时间：</td>
                 <td>
                     <input type="text" name="month" class="Wdate"
                            onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy年MM月'})" style="width: 120px"/>
@@ -161,6 +109,7 @@
             </tr>
         </table>
     </form>
+
 </div>
 <%@include file="/page/share/footer.jsp" %>
 </body>

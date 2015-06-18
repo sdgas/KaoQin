@@ -26,6 +26,7 @@ public class UserInfoAjax extends ActionSupport {
 
     public String getUserInfo() {
         userinfos = userInfoService.findByDep(Integer.valueOf(dep));
+        System.out.println(userinfos.size());
         return SUCCESS;
     }
 

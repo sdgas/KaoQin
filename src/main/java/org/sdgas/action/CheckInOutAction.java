@@ -32,6 +32,7 @@ public class CheckInOutAction extends MyActionSupport implements ModelDriven<Che
 
     @Override
     public String execute() {
+
         return SUCCESS;
     }
 
