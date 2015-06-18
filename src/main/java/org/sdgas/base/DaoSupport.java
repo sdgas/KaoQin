@@ -96,8 +96,8 @@ public class DaoSupport<T> implements DAO {
         String enetityName = getEntityName(entityClass);
         QueryResult<T> qr = new QueryResult<T>();
 
-        Query query = em.createQuery("select count(o) from " + enetityName + " o "
-                + (wherejpql == null ? "" : " where " + wherejpql));
+        Query query = em.createQuery("select count(*) from " + enetityName + " o "
+                + (wherejpql == null ? "" : "where " + wherejpql));
         setQueryParams(query, queryParams);
         qr.setTotalResult((Long) query.getSingleResult());
 
