@@ -36,7 +36,7 @@
 <body>
 <%@ include file="/page/share/menu.jsp" %>
 <div id="content">
-    <form action="File!createExcelBySch.action" method="post">
+    <form action="File!ceeateSubsidy.action" method="post">
         <table>
             <tr>
                 <td colspan="2" align="center">

@@ -23,6 +23,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_FORMULA;
+import static org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC;
 
 
 /**
@@ -42,6 +43,7 @@ public class ExcelUtil {
 
     private DepartmentService departmentService;
     private PeriodService periodService;
+    private ScheduleInfoService scheduleInfoService;
     private UserInfoService userInfoService;
     private OverTimeService overTimeService;
     private VacationInfoService vacationInfoService;
@@ -62,12 +64,14 @@ public class ExcelUtil {
     }
 
     //中晚班补贴报表
-    public void createExcel(String dep,String outPath) {
+    public void createExcel(String dep, String outPath) {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet("中晚班补贴");   //取excel工作表对象
 
+        //设置默认列宽
+        sheet.setDefaultColumnWidth(14);
         //合并单元格
-        sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 0, (short) 5));
+        sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 0, (short) 4));
         Row r0 = sheet.createRow(0);
         Cell cell = r0.createCell(0);
         r0.setHeightInPoints(28);
@@ -76,9 +80,9 @@ public class ExcelUtil {
         int year = cal.get(Calendar.YEAR);//得到年
         int month = cal.get(Calendar.MONTH) + 1;//得到月，从0开始的
 
-        cell.setCellValue("佛山市顺德区港华燃气有限公司" + year + "年" + month + "月 " + dep + "中晚班补贴");
+        cell.setCellValue(year + "年" + month + "月 " + dep + "中晚班补贴");
         XSSFFont font = wb.createFont();
-        font.setFontHeightInPoints((short) 20); // 字体高度
+        font.setFontHeightInPoints((short) 16); // 字体高度
         font.setFontName("宋体"); // 字体
         font.setBoldweight(HSSFFont.BOLDWEIGHT_BOLD); // 宽度
 
@@ -86,6 +90,102 @@ public class ExcelUtil {
         cellStyle.setFont(font);
         cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER); // 居中
         cell.setCellStyle(cellStyle);
+
+        //设置单元格样式
+        font = wb.createFont();
+        font.setFontHeightInPoints((short) 12); // 字体高度
+        font.setFontName("宋体"); // 字体
+        font.setBoldweight(HSSFFont.BOLDWEIGHT_NORMAL); // 宽度
+        cellStyle = wb.createCellStyle(); //设置excel单元格样式
+        cellStyle.setFont(font);
+        cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER); // 居中
+        cellStyle.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框
+        cellStyle.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
+        cellStyle.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
+        cellStyle.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
+
+        Row r = sheet.createRow(1);
+        cell = r.createCell(0);
+        cell.setCellValue("工号");
+        cell.setCellStyle(cellStyle);
+
+        cell = r.createCell(1);
+        cell.setCellValue("姓名");
+        cell.setCellStyle(cellStyle);
+
+        cell = r.createCell(2);
+        cell.setCellValue("补贴天数/天");
+        cell.setCellStyle(cellStyle);
+
+        cell = r.createCell(3);
+        cell.setCellValue("补贴标准/元");
+        cell.setCellStyle(cellStyle);
+
+        cell = r.createCell(4);
+        cell.setCellValue("补贴金额/元");
+        cell.setCellStyle(cellStyle);
+
+        int depId = departmentService.findByDepName(dep).getDEPTID();
+        String date = month >= 10 ? year + "" + month : year + "0" + month;
+        List<ScheduleInfo> scheduleInfos = scheduleInfoService.findByDepAndDate(depId, date);
+
+        CellStyle cs = wb.createCellStyle();
+        cs.setAlignment(XSSFCellStyle.ALIGN_CENTER); // 居中
+        cs.setBorderBottom(HSSFCellStyle.BORDER_THIN); //下边框
+        cs.setBorderLeft(HSSFCellStyle.BORDER_THIN);//左边框
+        cs.setBorderTop(HSSFCellStyle.BORDER_THIN);//上边框
+        cs.setBorderRight(HSSFCellStyle.BORDER_THIN);//右边框
+        cs.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+
+        int count = 2;
+        for (ScheduleInfo sc : scheduleInfos) {
+            USERINFO userinfo = userInfoService.find(USERINFO.class, sc.getUserinfo());
+            r = sheet.createRow(count);
+
+            int num = 0;
+            Integer[] s = this.change(sc);
+            for (int i = 0; i < s.length; i++) {
+                switch (s[i]) {
+                    case 8:
+                    case 9:
+                    case 11:
+                    case 12:
+                    case 15:
+                    case 17:
+                    case 19:
+                    case 10:
+                        num++;
+                        break;
+                    default:
+                        break;
+                }
+            }
+            if (num != 0) {
+                cell = r.createCell(0);
+                cell.setCellValue(userinfo.getBADGENUMBER());
+                cell.setCellStyle(cs);
+
+                cell = r.createCell(1);
+                cell.setCellValue(userinfo.getNAME());
+                cell.setCellStyle(cs);
+
+                cell = r.createCell(2);
+                cell.setCellType(CELL_TYPE_NUMERIC);
+                cell.setCellValue(num);
+                cell.setCellStyle(cs);
+
+                cell = r.createCell(3);
+                cell.setCellValue("15");
+                cell.setCellStyle(cs);
+
+                cell = r.createCell(4);
+                cell.setCellStyle(cs);
+                cell.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+                String exp = "C" + (count + 1) + "*15";
+                cell.setCellFormula(exp);
+                count++;
+            }
+        }
 
         //创建excel，并保存
         FileOutputStream fos = null;
@@ -178,7 +278,7 @@ public class ExcelUtil {
         c.setCellValue("合计");
         sheet.addMergedRegion(new CellRangeAddress(1, (short) 1, i + 1, (short) i + 5));
 
-        String type[] = {"病假天数", "事假天数", "补休小时", "平时加班","周末加班","假日加班", "出勤天数"};
+        String type[] = {"病假天数", "事假天数", "补休小时", "平时加班", "周末加班", "假日加班", "出勤天数"};
         for (String tep : type) {
             c = sheet.getRow(count).createCell(++i);
             c.setCellStyle(cs);
@@ -865,6 +965,11 @@ public class ExcelUtil {
     @Resource(name = "checkInOutServiceImpl")
     public void setCheckInOutService(CheckInOutService checkInOutService) {
         this.checkInOutService = checkInOutService;
+    }
+
+    @Resource(name = "scheduleInfoServiceImpl")
+    public void setScheduleInfoService(ScheduleInfoService scheduleInfoService) {
+        this.scheduleInfoService = scheduleInfoService;
     }
 
     @Resource(name = "holidayServiceImpl")

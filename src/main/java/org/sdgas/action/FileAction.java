@@ -315,7 +315,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
         excelUtil.createExcel(fileVO.getDepS(), path);
 
         logger.info("管理员：" + user.getUserId() + "成功生成中晚班补贴文件！文件名为:" + fileName);
-        fileVO.setResultMessage("<script>alert('成功生成考勤信息文件:" + fileName + "。请点击确认下载');location.href='FileDownload.action?path=" + fileName + "';</script>");
+        fileVO.setResultMessage("<script>alert('成功生成中晚班补贴文件:" + fileName + "。请点击确认下载');location.href='FileDownload.action?path=" + fileName + "';</script>");
         return SUCCESS;
     }
 
