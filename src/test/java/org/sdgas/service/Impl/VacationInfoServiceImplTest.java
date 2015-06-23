@@ -9,6 +9,8 @@ import org.sdgas.util.WebTool;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -18,7 +20,7 @@ public class VacationInfoServiceImplTest {
 
     private static ApplicationContext ac;
     private static VacationInfoService vacationInfoService;
-    private VacationInfo vacationInfo;
+    private List<VacationInfo> vacationInfos;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -33,8 +35,8 @@ public class VacationInfoServiceImplTest {
 
     @Test
     public void testFindByUserAndDate(){
-        vacationInfo = vacationInfoService.findByUserAndDate(62,"2015-05-21");
-        Assert.assertEquals(null, vacationInfo);
+        vacationInfos = vacationInfoService.findByUserAndDate(62,"2015-05-21");
+        Assert.assertEquals(null, vacationInfos);
     }
 
 }

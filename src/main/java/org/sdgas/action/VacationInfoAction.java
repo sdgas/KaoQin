@@ -39,7 +39,7 @@ public class VacationInfoAction extends MyActionSupport implements ModelDriven<V
     public String execute() {
         USERINFO userinfo = userInfoService.findByName(vacationInfoVO.getStaff());
         if(userinfo == null){
-            vacationInfoVO.setResultMessage("<script>alert('找不到该用户！');location.href='/KaoQin/page/leave/report.jsp';</script>");
+            vacationInfoVO.setResultMessage("<script>alert('找不到该用户！');location.href='/KaoQin/page/leave/apply.jsp';</script>");
             return ERROR;
         }
         VacationInfo vacationInfo = new VacationInfo();
@@ -56,7 +56,7 @@ public class VacationInfoAction extends MyActionSupport implements ModelDriven<V
 
         }
         logger.info("管理员：" + user.getUserId() + " 添加了一条休假记录(" + vacationInfo.getId() + ")。IP:" + ip);
-        vacationInfoVO.setResultMessage("<script>alert('添加成功！');location.href='/KaoQin/page/leave/report.jsp';</script>");
+        vacationInfoVO.setResultMessage("<script>alert('添加成功！');location.href='/KaoQin/page/leave/apply.jsp';</script>");
         return SUCCESS;
     }
 

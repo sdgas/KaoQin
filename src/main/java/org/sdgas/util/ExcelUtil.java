@@ -278,7 +278,8 @@ public class ExcelUtil {
         c.setCellValue("合计");
         sheet.addMergedRegion(new CellRangeAddress(1, (short) 1, i + 1, (short) i + 5));
 
-        String type[] = {"病假天数", "事假天数", "补休小时", "平时加班", "周末加班", "假日加班", "出勤天数"};
+        String type[] = {"病假天数", "事假天数", "加班时数", "补休小时", "出勤天数"};
+        //String type[] = {"病假天数", "事假天数", "补休小时", "平时加班", "周末加班", "假日加班", "出勤天数"};
         for (String tep : type) {
             c = sheet.getRow(count).createCell(++i);
             c.setCellStyle(cs);
@@ -311,12 +312,12 @@ public class ExcelUtil {
             r = sheet.createRow(++count);
             c = r.createCell(1);
             c.setCellStyle(wb.createCellStyle());
-            c.setCellValue("补休");
+            c.setCellValue("加班");
 
             r = sheet.createRow(++count);
             c = r.createCell(1);
             c.setCellStyle(wb.createCellStyle());
-            c.setCellValue("加班");
+            c.setCellValue("补休");
 
             //姓名列合并单元格
             sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 0, (short) 0));
@@ -371,9 +372,9 @@ public class ExcelUtil {
                 List<CHECKINOUT> checkinouts = checkInOutService.findByUserAndDate(userinfo.getUSERID(), day, d);  //当日打卡情况
                 day = d > 10 ? day + "-" + d : day + "-0" + d;
                 Overtime overtime = overTimeService.findByUserAndDate(userinfo.getUSERID(), day); //当日加班情况
-                VacationInfo vacationInfo = vacationInfoService.findByUserAndDate(userinfo.getUSERID(), day);  //当日休假情况
+                List<VacationInfo> vacationInfos = vacationInfoService.findByUserAndDate(userinfo.getUSERID(), day);  //当日休假情况
 
-                String msg[] = just(holidays, checkinouts, period, overtime, vacationInfo);
+                String msg[] = just(holidays, checkinouts, period, overtime, vacationInfos);
 
                 r = sheet.getRow(count - 3);
                 c = r.createCell(num);
@@ -429,7 +430,7 @@ public class ExcelUtil {
         return wb;
     }
 
-    private String[] just(List<Holiday> holidays, List<CHECKINOUT> checkinouts, Period period, Overtime overtime, VacationInfo vacationInfo) {
+    private String[] just(List<Holiday> holidays, List<CHECKINOUT> checkinouts, Period period, Overtime overtime, List<VacationInfo> vacationInfo) {
         String msg[] = {"", "", "", ""};
         if (overtime != null)
             msg[2] = String.valueOf(overtime.getLongTime());
@@ -459,18 +460,18 @@ public class ExcelUtil {
                         msg[1] = "√";
                     else
                         msg[1] = "▲";
-                    if (vacationInfo != null) {
-                        if (0.5 == vacationInfo.getLongTime()) {
-                            if (vacationInfo.getRemarks().contains("上午"))
-                                msg[0] = vacationInfo.getVacationSymbol();
+                    for (VacationInfo v : vacationInfo) {
+                        if (0.5 == v.getLongTime()) {
+                            if (v.getRemarks().contains("上午"))
+                                msg[0] = v.getVacationSymbol();
                             else
-                                msg[1] = vacationInfo.getVacationSymbol();
+                                msg[1] = v.getVacationSymbol();
                         } else {
-                            msg[0] = vacationInfo.getVacationSymbol();
-                            msg[1] = vacationInfo.getVacationSymbol();
+                            msg[0] = v.getVacationSymbol();
+                            msg[1] = v.getVacationSymbol();
                         }
-                        if ("G".equals(vacationInfo.getVacationSymbol())) {
-                            msg[3] = String.valueOf(vacationInfo.getLongTime());
+                        if ("G".equals(v.getVacationSymbol())) {
+                            msg[3] = String.valueOf(v.getLongTime());
                         }
                     }
                 } else {
@@ -493,18 +494,18 @@ public class ExcelUtil {
                             msg[1] = "异常";
                         }
                     }
-                    if (vacationInfo != null) {
-                        if (0.5 == vacationInfo.getLongTime()) {
-                            if (vacationInfo.getRemarks().contains("上午"))
-                                msg[0] = vacationInfo.getVacationSymbol();
+                    for (VacationInfo v : vacationInfo) {
+                        if (0.5 == v.getLongTime()) {
+                            if (v.getRemarks().contains("上午"))
+                                msg[0] = v.getVacationSymbol();
                             else
-                                msg[1] = vacationInfo.getVacationSymbol();
+                                msg[1] = v.getVacationSymbol();
                         } else {
-                            msg[0] = vacationInfo.getVacationSymbol();
-                            msg[1] = vacationInfo.getVacationSymbol();
+                            msg[0] = v.getVacationSymbol();
+                            msg[1] = v.getVacationSymbol();
                         }
-                        if ("G".equals(vacationInfo.getVacationSymbol())) {
-                            msg[3] = String.valueOf(vacationInfo.getLongTime());
+                        if ("G".equals(v.getVacationSymbol())) {
+                            msg[3] = String.valueOf(v.getLongTime());
                         }
                     }
                 }
@@ -515,17 +516,19 @@ public class ExcelUtil {
                         msg[1] = "未上班/打卡";
                     }
                 } else {
-                    if (0.5 == vacationInfo.getLongTime()) {
-                        if (vacationInfo.getRemarks().contains("上午"))
-                            msg[0] = vacationInfo.getVacationSymbol();
-                        else
-                            msg[1] = vacationInfo.getVacationSymbol();
-                    } else {
-                        msg[0] = vacationInfo.getVacationSymbol();
-                        msg[1] = vacationInfo.getVacationSymbol();
-                    }
-                    if ("G".equals(vacationInfo.getVacationSymbol())) {
-                        msg[3] = String.valueOf(vacationInfo.getLongTime());
+                    for (VacationInfo v : vacationInfo) {
+                        if (0.5 == v.getLongTime()) {
+                            if (v.getRemarks().contains("上午"))
+                                msg[0] = v.getVacationSymbol();
+                            else
+                                msg[1] = v.getVacationSymbol();
+                        } else {
+                            msg[0] = v.getVacationSymbol();
+                            msg[1] = v.getVacationSymbol();
+                        }
+                        if ("G".equals(v.getVacationSymbol())) {
+                            msg[3] = String.valueOf(v.getLongTime());
+                        }
                     }
                 }
             }

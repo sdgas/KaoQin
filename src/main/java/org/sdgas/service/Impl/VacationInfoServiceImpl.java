@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
+import java.util.List;
 
 /**
  * Created by 斌 on 2015/4/5.
@@ -19,12 +20,12 @@ public class VacationInfoServiceImpl extends DaoSupport<VacationInfo> implements
 
 
     @Override
-    public VacationInfo findByUserAndDate(int userId, String date) {
+    public List<VacationInfo> findByUserAndDate(int userId, String date) {
         Query query = em.createQuery("select o from VacationInfo o where o.userinfo=?1 and (o.remarks LIKE '%" + date + "%' OR ?2 between o.beginDate AND o.endDate)");
         query.setParameter(1, userId);
         query.setParameter(2, ChangeTime.parseShortDate(date));
         try {
-            return (VacationInfo) query.getSingleResult();
+            return query.getResultList();
         } catch (NoResultException e) {
             return null;
         }

@@ -40,7 +40,7 @@ public class OverTimeAction extends MyActionSupport implements ModelDriven<OverT
     public String execute() {
         USERINFO userinfo = userInfoService.findByName(overTimeVO.getUserinfo());
         if (userinfo == null) {
-            overTimeVO.setResultMessage("<script>alert('找不到该用户！');location.href='/KaoQin/page/ot/report.jsp';</script>");
+            overTimeVO.setResultMessage("<script>alert('找不到该用户！');location.href='/KaoQin/page/ot/apply.jsp';</script>");
             return ERROR;
         }
         Overtime overTime = new Overtime();
@@ -51,7 +51,7 @@ public class OverTimeAction extends MyActionSupport implements ModelDriven<OverT
         overTime.setDay(overTimeVO.getBeginTime().substring(0, 10));
         overTimeService.save(overTime);
         logger.info("管理员：" + user.getUserId() + " 添加了一条加班记录(" + overTime.getId() + ")。IP:" + ip);
-        overTimeVO.setResultMessage("<script>alert('添加成功！');location.href='/KaoQin/page/ot/report.jsp';</script>");
+        overTimeVO.setResultMessage("<script>alert('添加成功！');location.href='/KaoQin/page/ot/apply.jsp';</script>");
         return SUCCESS;
     }
 
