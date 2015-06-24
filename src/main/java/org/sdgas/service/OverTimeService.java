@@ -4,6 +4,7 @@ import org.sdgas.base.DAO;
 import org.sdgas.model.Overtime;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by 斌 on 2015/4/5.
@@ -16,5 +17,5 @@ public interface OverTimeService extends DAO {
      * @param date 日期
      * @return
      */
-    public Overtime findByUserAndDate(int userId,String date);
+    public List<Overtime> findByUserAndDate(int userId,String date);
 }

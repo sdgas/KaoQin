@@ -8,6 +8,8 @@ import org.sdgas.service.OverTimeService;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 /**
@@ -17,7 +19,7 @@ public class OverTimeServiceImplTest {
 
     private static ApplicationContext ac;
     private static OverTimeService overTimeService;
-    private Overtime overtime;
+    private List<Overtime> overtime;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
@@ -32,8 +34,8 @@ public class OverTimeServiceImplTest {
 
     @Test
     public void testFindByUserAndDate(){
-        overtime = overTimeService.findByUserAndDate(20211,"2015-05-04");
-        Assert.assertEquals(0,(int)overtime.getLongTime());
+        overtime = overTimeService.findByUserAndDate(61,"2015-06-14");
+        Assert.assertEquals(0,overtime.size());
     }
 
 }

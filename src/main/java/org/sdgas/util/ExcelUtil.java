@@ -371,7 +371,7 @@ public class ExcelUtil {
                 String day = month > 10 ? year + "-" + month : year + "-0" + month;
                 List<CHECKINOUT> checkinouts = checkInOutService.findByUserAndDate(userinfo.getUSERID(), day, d);  //当日打卡情况
                 day = d > 10 ? day + "-" + d : day + "-0" + d;
-                Overtime overtime = overTimeService.findByUserAndDate(userinfo.getUSERID(), day); //当日加班情况
+                List<Overtime> overtime = overTimeService.findByUserAndDate(userinfo.getUSERID(), day); //当日加班情况
                 List<VacationInfo> vacationInfos = vacationInfoService.findByUserAndDate(userinfo.getUSERID(), day);  //当日休假情况
 
                 String msg[] = just(holidays, checkinouts, period, overtime, vacationInfos);
@@ -430,15 +430,24 @@ public class ExcelUtil {
         return wb;
     }
 
-    private String[] just(List<Holiday> holidays, List<CHECKINOUT> checkinouts, Period period, Overtime overtime, List<VacationInfo> vacationInfo) {
+    private String[] just(List<Holiday> holidays, List<CHECKINOUT> checkinouts, Period period, List<Overtime> overtime, List<VacationInfo> vacationInfo) {
         String msg[] = {"", "", "", ""};
-        if (overtime != null)
-            msg[2] = String.valueOf(overtime.getLongTime());
+        if (overtime != null) {
+            double temp = 0;
+            for (Overtime ot : overtime) {
+                temp = temp + ot.getLongTime();
+            }
+            msg[2] = temp == 0 ? "" : String.valueOf(temp);
+        }
         if (period == null) {
-            if (overtime == null) {
+            if (overtime.size() == 0) {
                 return msg;
             } else {
-                msg[2] = String.valueOf(overtime.getLongTime());
+                double temp = 0;
+                for (Overtime ot : overtime) {
+                    temp = temp + ot.getLongTime();
+                }
+                msg[2] = temp == 0 ? "" : String.valueOf(temp);
                 return msg;
             }
         } else {

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,10 +19,10 @@ import java.util.Map;
 public class OverTimeServiceImpl extends DaoSupport<Overtime> implements OverTimeService {
 
     @Override
-    public Overtime findByUserAndDate(int userId, String date) {
+    public List<Overtime> findByUserAndDate(int userId, String date) {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("userinfo", userId);
         params.put("day", date);
-        return (Overtime) this.findSpecialObject(Overtime.class, params);
+        return this.findByFields(Overtime.class, params);
     }
 }
