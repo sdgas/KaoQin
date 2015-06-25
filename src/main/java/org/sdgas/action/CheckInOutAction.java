@@ -42,7 +42,7 @@ public class CheckInOutAction extends MyActionSupport implements ModelDriven<Che
     @Override
     public String execute() {
         /** 每页显示的结果数 **/
-        int maxResult = 20;
+        int maxResult = 25;
         /** 封装的页面数据 **/
         PageView<CHECKINOUT> pageView = new PageView<CHECKINOUT>(maxResult,
                 checkInOutVO.getPage());
@@ -69,6 +69,10 @@ public class CheckInOutAction extends MyActionSupport implements ModelDriven<Che
         pageView.setQueryResult(checkInOutService.getScrollData(CHECKINOUT.class, firstIndex, maxResult, jpql.toString(),
                 params.toArray(), orderBy));
         checkInOutVO.setPageView(pageView);
+
+        session.setAttribute("month", checkInOutVO.getMonth());
+        session.setAttribute("userinfo", checkInOutVO.getUserInfo());
+
         view = "/page/search/searchDetail.jsp";
         return VIEW;
     }

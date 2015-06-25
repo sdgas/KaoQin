@@ -36,10 +36,7 @@
     <script src='<%=basePath%>dwr/util.js' type="text/javascript"></script>
     <script src='<%=basePath%>dwr/engine.js' type="text/javascript"></script>
     <script src='<%=basePath%>dwr/interface/departmentService.js' type="text/javascript"></script>
-    <%--自动补全/模糊搜索--%>
-    <script type="text/javascript" src="<%=basePath%>js/jquery.js"></script>
-    <script type="text/javascript" src="<%=basePath%>js/jquery.autocomplete.js"></script>
-    <link rel="stylesheet" type="text/css" href="<%=basePath%>css/jquery.autocomplete.css"/>
+
     <script language="javascript" type="text/javascript"
             src="<%=basePath%>js/My97DatePicker/WdatePicker.js"></script>
 
@@ -64,6 +61,22 @@
             }
         });
 
+        function topage(page) {
+            var form = document.getElementById("myform");
+            document.getElementById("page").setAttribute("value", page);
+            form.submit();
+        }
+
+        function changebg(obj, cl) {
+            var bgcolor;
+            if (cl == "0") {
+                bgcolor = "#E2EDFC";
+            } else {
+                bgcolor = "#F8FBFE";
+            }
+            obj.style.backgroundColor = bgcolor;
+        }
+
         function getResult(departments) {
             var select_list = '<option value="" style="text-align: center;">'
                     + '--请选择--' + '</option>';
@@ -81,6 +94,7 @@
 <%@ include file="/page/share/menu.jsp" %>
 <div id="content">
     <form action="CheckInOut.action" method="post">
+
         <table>
             <tr>
                 <td colspan="12" align="center">
@@ -109,45 +123,48 @@
             </tr>
         </table>
     </form>
-    <table
-            style="border: 1px #000000 solid;margin: 20px auto 20px;opacity:0.9;font-family: '微软雅黑',serif;width:500px;text-align: center;">
-        <thead align="center">
-        <tr>
-            <td>
-                <h2>工号</h2>
-            </td>
-            <td>
-                <h2>姓名</h2>
-            </td>
-            <td>
-                <h2>日期</h2>
-            </td>
-            <td>
-                <h2>打卡时间</h2>
-            </td>
-        </tr>
-        </thead>
-        <s:iterator value="pageView.records" var="checkIn" status="s">
-            <tr style="background-color: #F8FBFE"
-                onmousemove="changebg(this,0)" onmouseout="changebg(this,1)">
-                <td>${num}</td>
-                <td>${userName}</td>
-                <td><fmt:formatDate value="${checkIn.CHECKTIME}" type="date" dateStyle="medium"/></td>
-                <td><fmt:formatDate value="${checkIn.CHECKTIME}" type="time" dateStyle="medium"/></td>
+    <form method="post" action="CheckInOut.action" align="center" id="myform">
+        <input type="hidden" name="page" value="1" id="page"/>
+        <input type="hidden" name="userInfo" value="${userinfo}"/>
+        <input type="hidden" name="month" value="${month}"/>
+        <table
+                style="border: 1px #000000 solid;margin: 20px auto 20px;opacity:0.9;font-family: '微软雅黑',serif;width:500px;text-align: center;">
+            <thead align="center">
+            <tr>
+                <td>
+                    <h2>工号</h2>
+                </td>
+                <td>
+                    <h2>姓名</h2>
+                </td>
+                <td>
+                    <h2>日期</h2>
+                </td>
+                <td>
+                    <h2>打卡时间</h2>
+                </td>
             </tr>
-        </s:iterator>
-    </table>
-    <table align="center"
-           style="font-family: '微软雅黑',serif;text-align: center">
-        <tr>
-            <td colspan="4" bgcolor="#114a93" align="right"
-                style="padding-right: 5px;height: 20px;">
-                <%@ include
-                        file="/page/share/fenye.jsp" %>
-            </td>
-        </tr>
-    </table>
+            </thead>
+            <s:iterator value="pageView.records" var="checkIn" status="s">
+                <tr align="center" style="background-color: #F8FBFE"
+                    onmousemove="changebg(this,0)" onmouseout="changebg(this,1)">
+                    <td>${num}</td>
+                    <td>${userName}</td>
+                    <td><fmt:formatDate value="${checkIn.CHECKTIME}" type="date" dateStyle="medium"/></td>
+                    <td><fmt:formatDate value="${checkIn.CHECKTIME}" type="time" dateStyle="medium"/></td>
+                </tr>
+            </s:iterator>
+        </table>
+        <table align="center" style="font-family: '微软雅黑',serif;text-align: center">
+            <tr>
+                <td colspan="5" bgcolor="#114a93" align="right"
+                    style="padding-right: 5px;height: 20px;">
+                    <%@ include file="/page/share/fenye.jsp" %>
+                </td>
+            </tr>
+        </table>
+    </form>
 </div>
-<%@include file="/page/share/footer.jsp" %>
+<%@include file="/page/share/footer.jsp"%>
 </body>
 </html>

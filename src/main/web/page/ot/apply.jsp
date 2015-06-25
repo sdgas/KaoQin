@@ -103,18 +103,18 @@
                 <td>加班时间：</td>
                 <td>
                     <input type="text" name="beginTime" class="Wdate"
-                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm'})"
                            style="width: 180px;height: 25px"/>
                     <span> ---- </span>
                     <input type="text" name="endTime" class="Wdate"
-                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm:ss'})"
+                           onfocus="WdatePicker({skin:'whyGreen',dateFmt:'yyyy-MM-dd HH:mm'})"
                            style="width: 180px;height: 25px"/>
                 </td>
             </tr>
             <tr>
                 <td>加班时长：</td>
                 <td>
-                    <input type="text" name="longTime" maxlength="3">
+                    <input type="text" name="longTime" maxlength="5">
                 </td>
             </tr>
             <tr>
