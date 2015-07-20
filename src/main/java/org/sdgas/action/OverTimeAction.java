@@ -44,8 +44,8 @@ public class OverTimeAction extends MyActionSupport implements ModelDriven<OverT
             return ERROR;
         }
         Overtime overTime = new Overtime();
-        overTime.setBeginTime(ChangeTime.parseDate(overTimeVO.getBeginTime()));
-        overTime.setEndTime(ChangeTime.parseDate(overTimeVO.getEndTime()));
+        overTime.setBeginTime(ChangeTime.parseDate(overTimeVO.getBeginTime()+":00"));
+        overTime.setEndTime(ChangeTime.parseDate(overTimeVO.getEndTime()+":00"));
         overTime.setLongTime(Double.valueOf(overTimeVO.getLongTime()));
         overTime.setUserinfo(userinfo.getUSERID());
         overTime.setDay(overTimeVO.getBeginTime().substring(0, 10));

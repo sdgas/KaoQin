@@ -143,7 +143,10 @@ public class ExcelUtil {
             r = sheet.createRow(count);
 
             int num = 0;
-            Integer[] s = this.change(sc);
+            --month;
+            int monthDays = WebTool.calDayByYearAndMonth(year + "", month + "");
+            ++month;
+            Integer[] s = this.change(sc, monthDays);
             for (int i = 0; i < s.length; i++) {
                 switch (s[i]) {
                     case 8:
@@ -247,15 +250,25 @@ public class ExcelUtil {
         c.setCellValue("日期");
 
         --month;
+        int cellNum = 2;
+        int monthDays = WebTool.calDayByYearAndMonth(year + "", month + "");
         for (int j = 1; j < headers.size() - 1; j++) {
             int num = Integer.valueOf(this.matchNum(headers.get(j).getTitle()));
-            Cell c1 = r.createCell(j + 1);
+            Cell c1 = r.createCell(cellNum++);
             c1.setCellStyle(cellStyle);
             String week = WebTool.getWeekOfDate(year + "-" + month + "-" + num);
             c1.setCellValue(week);
-            if (num == WebTool.calDayByYearAndMonth(year + "", month + "")) {
+            if (num == monthDays && monthDays == 30) {
                 ++month;
                 j++;
+            } else if (num == monthDays && monthDays == 31) {
+                ++month;
+            } else if (num == monthDays && monthDays == 29) {
+                ++month;
+                j = j + 2;
+            } else if (num == monthDays && monthDays == 28) {
+                ++month;
+                j = j + 3;
             }
         }
 
@@ -263,14 +276,32 @@ public class ExcelUtil {
         c = r.createCell(0);
         c.setCellStyle(cellStyle);
         c.setCellValue("姓名");
+
         //输出标题
         int i = 1;
+        --month;
+        cellNum = 2;
         for (; i < headers.size() - 1; i++) {
-            Cell c2 = r.createCell(i + 1);
-            c2.setCellStyle(cellStyle);
-            c2.setCellValue(headers.get(i).getTitle());
+            int num = Integer.valueOf(this.matchNum(headers.get(i).getTitle()));
+            Cell c1 = r.createCell(cellNum++);
+
+            c1.setCellStyle(cellStyle);
+            c1.setCellValue(num);
+            if (num == monthDays && monthDays == 30) {
+                ++month;
+                i++;
+            } else if (num == monthDays && monthDays == 31) {
+                ++month;
+            } else if (num == monthDays && monthDays == 29) {
+                ++month;
+                i = i + 2;
+            } else if (num == monthDays && monthDays == 28) {
+                ++month;
+                i = i + 3;
+            }
         }
 
+        i = cellNum - 1;//使i值等于当前单元格位置
         c = sheet.getRow(1).createCell(i + 1);
         CellStyle cs = wb.createCellStyle();
         cs.setAlignment(XSSFCellStyle.ALIGN_CENTER);
@@ -293,7 +324,7 @@ public class ExcelUtil {
         sheet.addMergedRegion(new CellRangeAddress(1, (short) 2, i, (short) i));
         int sick = 4;//病假取值范围
         for (ScheduleInfo s : (List<ScheduleInfo>) objs) {
-            Integer sc[] = change(s);
+            Integer sc[] = change(s, monthDays);
             USERINFO userinfo = userInfoService.find(USERINFO.class, s.getUserinfo());
             r = sheet.createRow(++count);
             c = r.createCell(0);
@@ -323,39 +354,78 @@ public class ExcelUtil {
             sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 0, (short) 0));
 
             //合计列合并单元格
-            c = sheet.getRow(count - 3).createCell(33);
+            c = sheet.getRow(count - 3).createCell(monthDays + 2);
             c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-            String exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"B\")/2";
+            String exp = "";
+            if (monthDays == 28)
+                exp = "COUNTIF(C" + sick + ":AD" + (sick + 1) + ",\"B\")/2";
+            else if (monthDays == 29)
+                exp = "COUNTIF(C" + sick + ":AE" + (sick + 1) + ",\"B\")/2";
+            else if (monthDays == 30)
+                exp = "COUNTIF(C" + sick + ":AF" + (sick + 1) + ",\"B\")/2";
+            else if (monthDays == 31)
+                exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"B\")/2";
             c.setCellFormula(exp);
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 33, (short) 33));//病假天数
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 2, (short) (monthDays + 2)));//病假天数
 
-            c = sheet.getRow(count - 3).createCell(34);
+            c = sheet.getRow(count - 3).createCell(monthDays + 3);
             c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-            exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"S\")/2";
+            if (monthDays == 28)
+                exp = "COUNTIF(C" + sick + ":AD" + (sick + 1) + ",\"S\")/2";
+            else if (monthDays == 29)
+                exp = "COUNTIF(C" + sick + ":AE" + (sick + 1) + ",\"S\")/2";
+            else if (monthDays == 30)
+                exp = "COUNTIF(C" + sick + ":AF" + (sick + 1) + ",\"S\")/2";
+            else if (monthDays == 31)
+                exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"S\")/2";
             c.setCellFormula(exp);
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 34, (short) 34));//事假天数
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 3, (short) (monthDays + 3)));//事假天数
 
 
-            c = sheet.getRow(count - 3).createCell(35);
+            c = sheet.getRow(count - 3).createCell(monthDays + 4);
             c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-            exp = "SUM(B" + count + ":AG" + count + ")";
+
+            if (monthDays == 28)
+                exp = "SUM(B" + count + ":AD" + count + ")";
+            else if (monthDays == 29)
+                exp = "SUM(B" + count + ":AE" + count + ")";
+            else if (monthDays == 30)
+                exp = "SUM(B" + count + ":AG" + count + ")";
+            else if (monthDays == 31)
+                exp = "SUM(B" + count + ":AG" + count + ")";
             c.setCellFormula(exp);
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 35, (short) 35));//补休小时
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 4, (short) (monthDays + 4)));//补休小时
 
 
-            c = sheet.getRow(count - 3).createCell(36);
+            c = sheet.getRow(count - 3).createCell(monthDays + 5);
             c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-            exp = "SUM(B" + (count + 1) + ":AG" + (count + 1) + ")";
+
+            if (monthDays == 28)
+                exp = "SUM(B" + (count + 1) + ":AD" + (count + 1) + ")";
+            else if (monthDays == 29)
+                exp = "SUM(B" + (count + 1) + ":AE" + (count + 1) + ")";
+            else if (monthDays == 30)
+                exp = "SUM(B" + (count + 1) + ":AF" + (count + 1) + ")";
+            else if (monthDays == 31)
+                exp = "SUM(B" + (count + 1) + ":AG" + (count + 1) + ")";
             c.setCellFormula(exp);
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 36, (short) 36));//加班小时
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 5, (short) (monthDays + 5)));//加班小时
 
 
-            c = sheet.getRow(count - 3).createCell(37);
+            c = sheet.getRow(count - 3).createCell(monthDays + 6);
             c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-            exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"√\")/2";
+
+            if (monthDays == 28)
+                exp = "COUNTIF(C" + sick + ":AD" + (sick + 1) + ",\"√\")/2";
+            else if (monthDays == 29)
+                exp = "COUNTIF(C" + sick + ":AE" + (sick + 1) + ",\"√\")/2";
+            else if (monthDays == 30)
+                exp = "COUNTIF(C" + sick + ":AF" + (sick + 1) + ",\"√\")/2";
+            else if (monthDays == 31)
+                exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"√\")/2";
             c.setCellFormula(exp);
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 37, (short) 37));//出勤天数
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, 38, (short) 38));//签名确认
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 6, (short) (monthDays + 6)));//出勤天数
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 7, (short) (monthDays + 7)));//签名确认
             sick += 4;
             int d = 21;
             --month;
@@ -364,13 +434,12 @@ public class ExcelUtil {
             String after = year + "-" + (month + 1) + "-20";
             List<Holiday> holidays = holidayService.findByDate(before, after); //考勤月的节假日
             int num = 2;//单元格数目
-            for (int j = 0; j < 31; j++) {
+            for (int j = 0; j < monthDays; j++) {
 
                 Period period = periodService.find(Period.class, sc[j]); //当日排班情况
-                //todo
                 String day = month > 10 ? year + "-" + month : year + "-0" + month;
                 List<CHECKINOUT> checkinouts = checkInOutService.findByUserAndDate(userinfo.getUSERID(), day, d);  //当日打卡情况
-                day = d > 10 ? day + "-" + d : day + "-0" + d;
+                day = d >= 10 ? day + "-" + d : day + "-0" + d;
                 List<Overtime> overtime = overTimeService.findByUserAndDate(userinfo.getUSERID(), day); //当日加班情况
                 List<VacationInfo> vacationInfos = vacationInfoService.findByUserAndDate(userinfo.getUSERID(), day);  //当日休假情况
 
@@ -480,7 +549,7 @@ public class ExcelUtil {
                             msg[1] = v.getVacationSymbol();
                         }
                         if ("G".equals(v.getVacationSymbol())) {
-                            msg[3] = String.valueOf(v.getLongTime());
+                            msg[3] = String.valueOf(v.getLongTime() * 7);
                         }
                     }
                 } else {
@@ -514,7 +583,7 @@ public class ExcelUtil {
                             msg[1] = v.getVacationSymbol();
                         }
                         if ("G".equals(v.getVacationSymbol())) {
-                            msg[3] = String.valueOf(v.getLongTime());
+                            msg[3] = String.valueOf(v.getLongTime() * 7);
                         }
                     }
                 }
@@ -536,7 +605,7 @@ public class ExcelUtil {
                             msg[1] = v.getVacationSymbol();
                         }
                         if ("G".equals(v.getVacationSymbol())) {
-                            msg[3] = String.valueOf(v.getLongTime());
+                            msg[3] = String.valueOf(v.getLongTime() * 7);
                         }
                     }
                 }
@@ -545,41 +614,136 @@ public class ExcelUtil {
         return msg;
     }
 
-    private Integer[] change(ScheduleInfo scheduleInfo) {
-        Integer str[] = new Integer[31];
-        str[0] = scheduleInfo.get_21st();
-        str[1] = scheduleInfo.get_22nd();
-        str[2] = scheduleInfo.get_23rd();
-        str[3] = scheduleInfo.get_24th();
-        str[4] = scheduleInfo.get_25th();
-        str[5] = scheduleInfo.get_26th();
-        str[6] = scheduleInfo.get_27th();
-        str[7] = scheduleInfo.get_28th();
-        str[8] = scheduleInfo.get_29th();
-        str[9] = scheduleInfo.get_30th();
-        str[10] = scheduleInfo.get_31st();
-        str[11] = scheduleInfo.get_1st();
-        str[12] = scheduleInfo.get_2nd();
-        str[13] = scheduleInfo.get_3rd();
-        str[14] = scheduleInfo.get_4th();
-        str[15] = scheduleInfo.get_5th();
-        str[16] = scheduleInfo.get_6th();
-        str[17] = scheduleInfo.get_7th();
-        str[18] = scheduleInfo.get_8th();
-        str[19] = scheduleInfo.get_9th();
-        str[20] = scheduleInfo.get_10th();
-        str[21] = scheduleInfo.get_11st();
-        str[22] = scheduleInfo.get_12nd();
-        str[23] = scheduleInfo.get_13rd();
-        str[24] = scheduleInfo.get_14th();
-        str[25] = scheduleInfo.get_15th();
-        str[26] = scheduleInfo.get_16th();
-        str[27] = scheduleInfo.get_17th();
-        str[28] = scheduleInfo.get_18th();
-        str[29] = scheduleInfo.get_19th();
-        str[30] = scheduleInfo.get_20th();
+    private Integer[] change(ScheduleInfo scheduleInfo, int monthdays) {
+        Integer str[] = new Integer[0];
+        if (monthdays == 28) {
+            str = new Integer[28];
+            str[0] = scheduleInfo.get_21st();
+            str[1] = scheduleInfo.get_22nd();
+            str[2] = scheduleInfo.get_23rd();
+            str[3] = scheduleInfo.get_24th();
+            str[4] = scheduleInfo.get_25th();
+            str[5] = scheduleInfo.get_26th();
+            str[6] = scheduleInfo.get_27th();
+            str[7] = scheduleInfo.get_28th();
+            str[8] = scheduleInfo.get_1st();
+            str[9] = scheduleInfo.get_2nd();
+            str[10] = scheduleInfo.get_3rd();
+            str[11] = scheduleInfo.get_4th();
+            str[12] = scheduleInfo.get_5th();
+            str[13] = scheduleInfo.get_6th();
+            str[14] = scheduleInfo.get_7th();
+            str[15] = scheduleInfo.get_8th();
+            str[16] = scheduleInfo.get_9th();
+            str[17] = scheduleInfo.get_10th();
+            str[18] = scheduleInfo.get_11st();
+            str[19] = scheduleInfo.get_12nd();
+            str[20] = scheduleInfo.get_13rd();
+            str[21] = scheduleInfo.get_14th();
+            str[22] = scheduleInfo.get_15th();
+            str[23] = scheduleInfo.get_16th();
+            str[24] = scheduleInfo.get_17th();
+            str[25] = scheduleInfo.get_18th();
+            str[26] = scheduleInfo.get_19th();
+            str[27] = scheduleInfo.get_20th();
+        } else if (monthdays == 29) {
+            str = new Integer[29];
+            str[0] = scheduleInfo.get_21st();
+            str[1] = scheduleInfo.get_22nd();
+            str[2] = scheduleInfo.get_23rd();
+            str[3] = scheduleInfo.get_24th();
+            str[4] = scheduleInfo.get_25th();
+            str[5] = scheduleInfo.get_26th();
+            str[6] = scheduleInfo.get_27th();
+            str[7] = scheduleInfo.get_28th();
+            str[8] = scheduleInfo.get_29th();
+            str[9] = scheduleInfo.get_1st();
+            str[10] = scheduleInfo.get_2nd();
+            str[11] = scheduleInfo.get_3rd();
+            str[12] = scheduleInfo.get_4th();
+            str[13] = scheduleInfo.get_5th();
+            str[14] = scheduleInfo.get_6th();
+            str[15] = scheduleInfo.get_7th();
+            str[16] = scheduleInfo.get_8th();
+            str[17] = scheduleInfo.get_9th();
+            str[18] = scheduleInfo.get_10th();
+            str[19] = scheduleInfo.get_11st();
+            str[20] = scheduleInfo.get_12nd();
+            str[21] = scheduleInfo.get_13rd();
+            str[22] = scheduleInfo.get_14th();
+            str[23] = scheduleInfo.get_15th();
+            str[24] = scheduleInfo.get_16th();
+            str[25] = scheduleInfo.get_17th();
+            str[26] = scheduleInfo.get_18th();
+            str[27] = scheduleInfo.get_19th();
+            str[28] = scheduleInfo.get_20th();
+        } else if (monthdays == 30) {
+            str = new Integer[30];
+            str[0] = scheduleInfo.get_21st();
+            str[1] = scheduleInfo.get_22nd();
+            str[2] = scheduleInfo.get_23rd();
+            str[3] = scheduleInfo.get_24th();
+            str[4] = scheduleInfo.get_25th();
+            str[5] = scheduleInfo.get_26th();
+            str[6] = scheduleInfo.get_27th();
+            str[7] = scheduleInfo.get_28th();
+            str[8] = scheduleInfo.get_29th();
+            str[9] = scheduleInfo.get_30th();
+            str[10] = scheduleInfo.get_1st();
+            str[11] = scheduleInfo.get_2nd();
+            str[12] = scheduleInfo.get_3rd();
+            str[13] = scheduleInfo.get_4th();
+            str[14] = scheduleInfo.get_5th();
+            str[15] = scheduleInfo.get_6th();
+            str[16] = scheduleInfo.get_7th();
+            str[17] = scheduleInfo.get_8th();
+            str[18] = scheduleInfo.get_9th();
+            str[19] = scheduleInfo.get_10th();
+            str[20] = scheduleInfo.get_11st();
+            str[21] = scheduleInfo.get_12nd();
+            str[22] = scheduleInfo.get_13rd();
+            str[23] = scheduleInfo.get_14th();
+            str[24] = scheduleInfo.get_15th();
+            str[25] = scheduleInfo.get_16th();
+            str[26] = scheduleInfo.get_17th();
+            str[27] = scheduleInfo.get_18th();
+            str[28] = scheduleInfo.get_19th();
+            str[29] = scheduleInfo.get_20th();
+        } else if (monthdays == 31) {
+            str = new Integer[31];
+            str[0] = scheduleInfo.get_21st();
+            str[1] = scheduleInfo.get_22nd();
+            str[2] = scheduleInfo.get_23rd();
+            str[3] = scheduleInfo.get_24th();
+            str[4] = scheduleInfo.get_25th();
+            str[5] = scheduleInfo.get_26th();
+            str[6] = scheduleInfo.get_27th();
+            str[7] = scheduleInfo.get_28th();
+            str[8] = scheduleInfo.get_29th();
+            str[9] = scheduleInfo.get_30th();
+            str[10] = scheduleInfo.get_31st();
+            str[11] = scheduleInfo.get_1st();
+            str[12] = scheduleInfo.get_2nd();
+            str[13] = scheduleInfo.get_3rd();
+            str[14] = scheduleInfo.get_4th();
+            str[15] = scheduleInfo.get_5th();
+            str[16] = scheduleInfo.get_6th();
+            str[17] = scheduleInfo.get_7th();
+            str[18] = scheduleInfo.get_8th();
+            str[19] = scheduleInfo.get_9th();
+            str[20] = scheduleInfo.get_10th();
+            str[21] = scheduleInfo.get_11st();
+            str[22] = scheduleInfo.get_12nd();
+            str[23] = scheduleInfo.get_13rd();
+            str[24] = scheduleInfo.get_14th();
+            str[25] = scheduleInfo.get_15th();
+            str[26] = scheduleInfo.get_16th();
+            str[27] = scheduleInfo.get_17th();
+            str[28] = scheduleInfo.get_18th();
+            str[29] = scheduleInfo.get_19th();
+            str[30] = scheduleInfo.get_20th();
+        }
         return str;
-
     }
 
     /**
