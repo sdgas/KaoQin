@@ -54,16 +54,20 @@ public class CheckInOutAction extends MyActionSupport implements ModelDriven<Che
         orderBy.put("USERID", "DESC");
         /** 列表条件 **/
         StringBuffer jpql = new StringBuffer("");
-        if (!checkInOutVO.getUserInfo().isEmpty()) {
-            USERINFO userinfo = userInfoService.findByName(checkInOutVO.getUserInfo());
-            jpql.append("USERID='" + userinfo.getUSERID()).append("'");
-            checkInOutVO.setUserName(userinfo.getNAME());
-            checkInOutVO.setNum(userinfo.getBADGENUMBER());
-        }
-        /*if (!checkInOutVO.getDepId().isEmpty())*/
-        if (!checkInOutVO.getMonth().isEmpty()) {
 
-        }
+        USERINFO userinfo = userInfoService.findByName(checkInOutVO.getUserInfo());
+        jpql.append("USERID='" + userinfo.getUSERID()).append("'");
+        checkInOutVO.setUserName(userinfo.getNAME());
+        checkInOutVO.setNum(userinfo.getBADGENUMBER());
+
+        String tem = checkInOutVO.getMonth().substring(5, 7);
+        int month = Integer.valueOf(tem) - 1;
+        String before = checkInOutVO.getMonth().substring(0, 4) + "-" + month + "-21";
+        String after = checkInOutVO.getMonth().replace("年", "-").replace("月", "-") + "21";
+
+        jpql.append(" AND CHECKTIME>'" + before + " 00:00:00' AND CHECKTIME<'" + after + " 00:00:00'");
+        checkInOutVO.setMonth(checkInOutVO.getMonth());
+
         /** 列表条件的值 **/
         List<Object> params = new ArrayList<Object>();
         pageView.setQueryResult(checkInOutService.getScrollData(CHECKINOUT.class, firstIndex, maxResult, jpql.toString(),
