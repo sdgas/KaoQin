@@ -218,6 +218,10 @@ public class ExcelUtil {
         int count = 0;
         XSSFSheet sheet = wb.createSheet("考勤月报表");   //取excel工作表对象
 
+        XSSFPrintSetup ps = sheet.getPrintSetup();
+        ps.setLandscape(true); //打印方向，true：横向，false：纵向(默认)
+        ps.setPaperSize(HSSFPrintSetup.A4_PAPERSIZE); //纸张类型
+
         List<ExcelHeader> headers = getHeaderList(clz);
         Collections.sort(headers);
 
@@ -239,7 +243,12 @@ public class ExcelUtil {
 
         XSSFCellStyle cellStyle = wb.createCellStyle(); //设置excel单元格样式
         cellStyle.setFont(font);
-        cellStyle.setAlignment(XSSFCellStyle.ALIGN_CENTER); // 居中
+        cellStyle.setAlignment(CellStyle.ALIGN_CENTER);//水平居中
+        cellStyle.setVerticalAlignment(CellStyle.VERTICAL_CENTER);//垂直居中
+        cellStyle.setBorderTop((short) 1);
+        cellStyle.setBorderBottom((short) 1);
+        cellStyle.setBorderLeft((short) 1);
+        cellStyle.setBorderRight((short) 1);
         cell.setCellStyle(cellStyle);
 
         Row r = sheet.createRow(++count);
@@ -305,6 +314,11 @@ public class ExcelUtil {
         c = sheet.getRow(1).createCell(i + 1);
         CellStyle cs = wb.createCellStyle();
         cs.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+        cs.setAlignment(XSSFCellStyle.VERTICAL_CENTER);
+        cs.setBorderTop((short) 1);
+        cs.setBorderBottom((short) 1);
+        cs.setBorderLeft((short) 1);
+        cs.setBorderRight((short) 1);
         c.setCellStyle(cs);
         c.setCellValue("合计");
         sheet.addMergedRegion(new CellRangeAddress(1, (short) 1, i + 1, (short) i + 5));
@@ -318,7 +332,6 @@ public class ExcelUtil {
         }
 
         c = sheet.getRow(1).createCell(++i);
-        cs.setAlignment(XSSFCellStyle.VERTICAL_CENTER);
         c.setCellStyle(cs);
         c.setCellValue("签名确认");
         sheet.addMergedRegion(new CellRangeAddress(1, (short) 2, i, (short) i));
@@ -332,22 +345,22 @@ public class ExcelUtil {
             c.setCellValue(userinfo.getNAME());
 
             c = r.createCell(1);
-            c.setCellStyle(wb.createCellStyle());
+            c.setCellStyle(cs);
             c.setCellValue("上午");
 
             r = sheet.createRow(++count);
             c = r.createCell(1);
-            c.setCellStyle(wb.createCellStyle());
+            c.setCellStyle(cs);
             c.setCellValue("下午");
 
             r = sheet.createRow(++count);
             c = r.createCell(1);
-            c.setCellStyle(wb.createCellStyle());
+            c.setCellStyle(cs);
             c.setCellValue("加班");
 
             r = sheet.createRow(++count);
             c = r.createCell(1);
-            c.setCellStyle(wb.createCellStyle());
+            c.setCellStyle(cs);
             c.setCellValue("补休");
 
             //姓名列合并单元格
@@ -447,23 +460,23 @@ public class ExcelUtil {
 
                 r = sheet.getRow(count - 3);
                 c = r.createCell(num);
-                c.setCellStyle(wb.createCellStyle());
+                c.setCellStyle(cs);
                 c.setCellValue(msg[0]);
 
                 r = sheet.getRow(count - 2);
                 c = r.createCell(num);
-                c.setCellStyle(wb.createCellStyle());
+                c.setCellStyle(cs);
                 c.setCellValue(msg[1]);
 
                 r = sheet.getRow(count - 1);
                 c = r.createCell(num);
-                c.setCellStyle(wb.createCellStyle());
+                c.setCellStyle(cs);
                 if (!msg[2].trim().isEmpty())
                     c.setCellValue(Double.valueOf(msg[2]));
 
                 r = sheet.getRow(count);
                 c = r.createCell(num);
-                c.setCellStyle(wb.createCellStyle());
+                c.setCellStyle(cs);
                 if (!msg[3].trim().isEmpty())
                     c.setCellValue(Double.valueOf(msg[3]));
 
@@ -480,21 +493,35 @@ public class ExcelUtil {
 
         r = sheet.createRow(count + 1);
         c = r.createCell(0);
-        c.setCellStyle(wb.createCellStyle());
+        c.setCellStyle(cs);
         c.setCellValue("备注：加班以小时为单位 出勤√ 迟到★ 早退▲ 年假A 病假B 丧假C 婚假D 产假E 未打卡F 补休G 陪产假H 事假S 工伤+ 补休G  学习X ");
+        sheet.addMergedRegion(new CellRangeAddress((count + 1), (short) (count + 1), 0, (short) (monthDays + 7)));
 
         r = sheet.createRow(count + 2);
         c = r.createCell(3);
-        c.setCellStyle(wb.createCellStyle());
+        c.setCellStyle(cs);
         c.setCellValue("制表人：");
+        sheet.addMergedRegion(new CellRangeAddress((count + 2), (short) (count + 2), 3, 5));
 
         c = r.createCell(7);
-        c.setCellStyle(wb.createCellStyle());
+        c.setCellStyle(cs);
         c.setCellValue("部门负责人：");
+        sheet.addMergedRegion(new CellRangeAddress((count + 2), (short) (count + 2), 7, 11));
 
-        c = r.createCell(13);
-        c.setCellStyle(wb.createCellStyle());
+        c = r.createCell(15);
+        c.setCellStyle(cs);
         c.setCellValue("分管领导审核：");
+        sheet.addMergedRegion(new CellRangeAddress((count + 2), (short) (count + 2), 15, 20));
+
+        //自动调整宽度
+        for (int a = 2; a < 45; a++) {
+            sheet.autoSizeColumn((short) a);
+        }
+
+        sheet.setMargin(XSSFSheet.TopMargin, 0);// 页边距（上）
+        sheet.setMargin(XSSFSheet.BottomMargin, 0);// 页边距（下）
+        sheet.setMargin(XSSFSheet.LeftMargin, 0);// 页边距（左）
+        sheet.setMargin(XSSFSheet.RightMargin, 0);// 页边距（右
 
         return wb;
     }
