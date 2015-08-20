@@ -94,6 +94,12 @@
                 </td>
             </tr>
             <tr>
+                <td>工 号：</td>
+                <td>
+                    <input type="text" name="userId">
+                </td>
+            </tr>
+            <tr>
                 <td>员工姓名：</td>
                 <td>
                     <input type="text" name="userinfo" id="userName">

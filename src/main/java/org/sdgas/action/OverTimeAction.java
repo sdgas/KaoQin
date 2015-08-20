@@ -38,14 +38,22 @@ public class OverTimeAction extends MyActionSupport implements ModelDriven<OverT
 
     @Override
     public String execute() {
-        USERINFO userinfo = userInfoService.findByName(overTimeVO.getUserinfo());
+        USERINFO userinfo;
+        if (!overTimeVO.getUserId().isEmpty())
+            userinfo = userInfoService.findById(overTimeVO.getUserId());
+        else if(!overTimeVO.getUserinfo().isEmpty())
+            userinfo = userInfoService.findByName(overTimeVO.getUserinfo());
+        else {
+            overTimeVO.setResultMessage("<script>alert('找不到该用户！');location.href='/KaoQin/page/ot/apply.jsp';</script>");
+            return ERROR;
+        }
         if (userinfo == null) {
             overTimeVO.setResultMessage("<script>alert('找不到该用户！');location.href='/KaoQin/page/ot/apply.jsp';</script>");
             return ERROR;
         }
         Overtime overTime = new Overtime();
-        overTime.setBeginTime(ChangeTime.parseDate(overTimeVO.getBeginTime()+":00"));
-        overTime.setEndTime(ChangeTime.parseDate(overTimeVO.getEndTime()+":00"));
+        overTime.setBeginTime(ChangeTime.parseDate(overTimeVO.getBeginTime() + ":00"));
+        overTime.setEndTime(ChangeTime.parseDate(overTimeVO.getEndTime() + ":00"));
         overTime.setLongTime(Double.valueOf(overTimeVO.getLongTime()));
         overTime.setUserinfo(userinfo.getUSERID());
         overTime.setDay(overTimeVO.getBeginTime().substring(0, 10));

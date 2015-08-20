@@ -6,11 +6,19 @@ package org.sdgas.VO;
 public class OverTimeVO extends BaseVO {
 
     private String userinfo;
+    private String userId;
     private String longTime;
     private String remarks;
     private String beginTime;
     private String endTime;
 
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
 
     public String getUserinfo() {
         return userinfo;
