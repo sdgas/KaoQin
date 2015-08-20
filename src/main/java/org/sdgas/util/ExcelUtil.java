@@ -994,7 +994,7 @@ public class ExcelUtil {
                     mn = mn.substring(0, 1).toLowerCase() + mn.substring(1);
                     if ("休".equals(this.getCellValue(c)))
                         BeanUtils.copyProperty(obj, mn, "");
-                    else if (this.getCellValue(c).matches("[A-Z][0-9]*")) {
+                    else if (this.getCellValue(c).matches("[A-Z]*[0-9]*[早|中|午|晚|正]{0,1}[常]*")) {
                         DEPARTMENTS departments = departmentService.findByDepName(dep);
                         Period period = periodService.findByDepAndSymbol(departments.getDEPTID(), this.getCellValue(c), schedule);
                         BeanUtils.copyProperty(obj, mn, period.getId());
