@@ -48,7 +48,7 @@
                 <td>
                     <select id="depS" name="depS" style="font-family: '微软雅黑';font-size: 16px;">
                         <option value="" style="text-align: center">---------请选择---------</option>
-                        <option style="text-align: center" value="生成运行部">生成运行部</option>
+                        <option style="text-align: center" value="生产运行部">生产运行部</option>
                         <option style="text-align: center" value="客户服务部">客户服务部</option>
                     </select>
                 </td>
