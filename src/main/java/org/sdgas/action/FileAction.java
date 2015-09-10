@@ -320,8 +320,9 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     }
 
     private ScheduleInfo createS(int user, int dep, int year, int month) {
-        int days = WebTool.calDayByYearAndMonth(String.valueOf(year), String.valueOf(month));
+        int days = WebTool.calDayByYearAndMonth(String.valueOf(year), String.valueOf(month-1));
         ScheduleInfo scheduleInfo = new ScheduleInfo();
+
 
         scheduleInfo.set_1st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-01"));
         scheduleInfo.set_2nd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-02"));
@@ -338,12 +339,14 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
         scheduleInfo.set_13rd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-13"));
         scheduleInfo.set_14th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-14"));
         scheduleInfo.set_15th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-15"));
+
+        month = month - 1;
         scheduleInfo.set_16th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-16"));
         scheduleInfo.set_17th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-17"));
         scheduleInfo.set_18th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-18"));
         scheduleInfo.set_19th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-19"));
         scheduleInfo.set_20th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-20"));
-        month = month - 1;
+
         scheduleInfo.set_21st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-21"));
         scheduleInfo.set_22nd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-22"));
         scheduleInfo.set_23rd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-23"));
@@ -365,9 +368,9 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
             scheduleInfo.set_31st(0);
         } else if (30 == days)
             scheduleInfo.set_31st(0);
-        String before = year + "-" + (month > 10 ? month : "0" + month) + "-21";
+        //String before = year + "-" + (month > 10 ? month : "0" + month) + "-16";
         month = month + 1;
-        String after = year + "-" + (month > 10 ? month : "0" + month) + "-20";
+       // String after = year + "-" + (month > 10 ? month : "0" + month) + "-15";
 
         scheduleInfo.setDepId(dep);
         scheduleInfo.setUserinfo(user);

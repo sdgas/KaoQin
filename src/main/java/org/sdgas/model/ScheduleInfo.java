@@ -33,6 +33,12 @@ public class ScheduleInfo {
     private String scheduleDate;
 
     //每个月的21~20号排班情况
+
+    private int _16th;
+    private int _17th;
+    private int _18th;
+    private int _19th;
+    private int _20th;
     private int _21st;
     private int _22nd;
     private int _23rd;
@@ -59,11 +65,7 @@ public class ScheduleInfo {
     private int _13rd;
     private int _14th;
     private int _15th;
-    private int _16th;
-    private int _17th;
-    private int _18th;
-    private int _19th;
-    private int _20th;
+
 
     @Id
     @GeneratedValue
@@ -93,7 +95,7 @@ public class ScheduleInfo {
         this.scheduleDate = scheduleDate;
     }
 
-    @ExcelResources(order = 2, title = "21")
+    @ExcelResources(order = 7, title = "21")
     public int get_21st() {
         return _21st;
     }
@@ -102,7 +104,7 @@ public class ScheduleInfo {
         this._21st = _21st;
     }
 
-    @ExcelResources(order = 3, title = "22")
+    @ExcelResources(order = 8, title = "22")
     public int get_22nd() {
         return _22nd;
     }
@@ -111,7 +113,7 @@ public class ScheduleInfo {
         this._22nd = _22nd;
     }
 
-    @ExcelResources(order = 4, title = "23")
+    @ExcelResources(order = 9, title = "23")
     public int get_23rd() {
         return _23rd;
     }
@@ -120,7 +122,7 @@ public class ScheduleInfo {
         this._23rd = _23rd;
     }
 
-    @ExcelResources(order = 5, title = "24")
+    @ExcelResources(order = 10, title = "24")
     public int get_24th() {
         return _24th;
     }
@@ -129,7 +131,7 @@ public class ScheduleInfo {
         this._24th = _24th;
     }
 
-    @ExcelResources(order = 6, title = "25")
+    @ExcelResources(order = 11, title = "25")
     public int get_25th() {
         return _25th;
     }
@@ -138,7 +140,7 @@ public class ScheduleInfo {
         this._25th = _25th;
     }
 
-    @ExcelResources(order = 7, title = "26")
+    @ExcelResources(order = 12, title = "26")
     public int get_26th() {
         return _26th;
     }
@@ -147,7 +149,7 @@ public class ScheduleInfo {
         this._26th = _26th;
     }
 
-    @ExcelResources(order = 8, title = "27")
+    @ExcelResources(order = 13, title = "27")
     public int get_27th() {
         return _27th;
     }
@@ -156,7 +158,7 @@ public class ScheduleInfo {
         this._27th = _27th;
     }
 
-    @ExcelResources(order = 9, title = "28")
+    @ExcelResources(order = 14, title = "28")
     public int get_28th() {
         return _28th;
     }
@@ -165,7 +167,7 @@ public class ScheduleInfo {
         this._28th = _28th;
     }
 
-    @ExcelResources(order = 10, title = "29")
+    @ExcelResources(order = 15, title = "29")
     public int get_29th() {
         return _29th;
     }
@@ -174,7 +176,7 @@ public class ScheduleInfo {
         this._29th = _29th;
     }
 
-    @ExcelResources(order = 11, title = "30")
+    @ExcelResources(order = 16, title = "30")
     public int get_30th() {
         return _30th;
     }
@@ -183,7 +185,7 @@ public class ScheduleInfo {
         this._30th = _30th;
     }
 
-    @ExcelResources(order = 12, title = "31")
+    @ExcelResources(order = 17, title = "31")
     public int get_31st() {
         return _31st;
     }
@@ -192,7 +194,7 @@ public class ScheduleInfo {
         this._31st = _31st;
     }
 
-    @ExcelResources(order = 13, title = "1")
+    @ExcelResources(order = 18, title = "1")
     public int get_1st() {
         return _1st;
     }
@@ -201,7 +203,7 @@ public class ScheduleInfo {
         this._1st = _1st;
     }
 
-    @ExcelResources(order = 14, title = "2")
+    @ExcelResources(order = 19, title = "2")
     public int get_2nd() {
         return _2nd;
     }
@@ -210,7 +212,7 @@ public class ScheduleInfo {
         this._2nd = _2nd;
     }
 
-    @ExcelResources(order = 15, title = "3")
+    @ExcelResources(order = 20, title = "3")
     public int get_3rd() {
         return _3rd;
     }
@@ -219,7 +221,7 @@ public class ScheduleInfo {
         this._3rd = _3rd;
     }
 
-    @ExcelResources(order = 16, title = "4")
+    @ExcelResources(order = 21, title = "4")
     public int get_4th() {
         return _4th;
     }
@@ -228,7 +230,7 @@ public class ScheduleInfo {
         this._4th = _4th;
     }
 
-    @ExcelResources(order = 17, title = "5")
+    @ExcelResources(order = 22, title = "5")
     public int get_5th() {
         return _5th;
     }
@@ -237,7 +239,7 @@ public class ScheduleInfo {
         this._5th = _5th;
     }
 
-    @ExcelResources(order = 18, title = "6")
+    @ExcelResources(order = 23, title = "6")
     public int get_6th() {
         return _6th;
     }
@@ -246,7 +248,7 @@ public class ScheduleInfo {
         this._6th = _6th;
     }
 
-    @ExcelResources(order = 19, title = "7")
+    @ExcelResources(order = 24, title = "7")
     public int get_7th() {
         return _7th;
     }
@@ -255,7 +257,7 @@ public class ScheduleInfo {
         this._7th = _7th;
     }
 
-    @ExcelResources(order = 20, title = "8")
+    @ExcelResources(order = 25, title = "8")
     public int get_8th() {
         return _8th;
     }
@@ -264,7 +266,7 @@ public class ScheduleInfo {
         this._8th = _8th;
     }
 
-    @ExcelResources(order = 21, title = "9")
+    @ExcelResources(order = 26, title = "9")
     public int get_9th() {
         return _9th;
     }
@@ -273,7 +275,7 @@ public class ScheduleInfo {
         this._9th = _9th;
     }
 
-    @ExcelResources(order = 22, title = "10")
+    @ExcelResources(order = 27, title = "10")
     public int get_10th() {
         return _10th;
     }
@@ -282,7 +284,7 @@ public class ScheduleInfo {
         this._10th = _10th;
     }
 
-    @ExcelResources(order = 23, title = "11")
+    @ExcelResources(order = 28, title = "11")
     public int get_11st() {
         return _11st;
     }
@@ -291,7 +293,7 @@ public class ScheduleInfo {
         this._11st = _11st;
     }
 
-    @ExcelResources(order = 24, title = "12")
+    @ExcelResources(order = 29, title = "12")
     public int get_12nd() {
         return _12nd;
     }
@@ -300,7 +302,7 @@ public class ScheduleInfo {
         this._12nd = _12nd;
     }
 
-    @ExcelResources(order = 25, title = "13")
+    @ExcelResources(order = 30, title = "13")
     public int get_13rd() {
         return _13rd;
     }
@@ -309,7 +311,7 @@ public class ScheduleInfo {
         this._13rd = _13rd;
     }
 
-    @ExcelResources(order = 26, title = "14")
+    @ExcelResources(order = 31, title = "14")
     public int get_14th() {
         return _14th;
     }
@@ -318,7 +320,7 @@ public class ScheduleInfo {
         this._14th = _14th;
     }
 
-    @ExcelResources(order = 27, title = "15")
+    @ExcelResources(order =32 , title = "15")
     public int get_15th() {
         return _15th;
     }
@@ -327,7 +329,7 @@ public class ScheduleInfo {
         this._15th = _15th;
     }
 
-    @ExcelResources(order = 28, title = "16")
+    @ExcelResources(order = 2, title = "16")
     public int get_16th() {
         return _16th;
     }
@@ -336,7 +338,7 @@ public class ScheduleInfo {
         this._16th = _16th;
     }
 
-    @ExcelResources(order = 29, title = "17")
+    @ExcelResources(order = 3, title = "17")
     public int get_17th() {
         return _17th;
     }
@@ -345,7 +347,7 @@ public class ScheduleInfo {
         this._17th = _17th;
     }
 
-    @ExcelResources(order = 30, title = "18")
+    @ExcelResources(order = 4, title = "18")
     public int get_18th() {
         return _18th;
     }
@@ -354,7 +356,7 @@ public class ScheduleInfo {
         this._18th = _18th;
     }
 
-    @ExcelResources(order = 31, title = "19")
+    @ExcelResources(order = 5, title = "19")
     public int get_19th() {
         return _19th;
     }
@@ -363,7 +365,7 @@ public class ScheduleInfo {
         this._19th = _19th;
     }
 
-    @ExcelResources(order = 32, title = "20")
+    @ExcelResources(order = 6, title = "20")
     public int get_20th() {
         return _20th;
     }
