@@ -382,13 +382,50 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
 
         if (isHoliday(date))
             return 0;
+        else if (isWorked(date))
+            return 21;
         else if (WebTool.getWeekOfDate(date) == "六" || WebTool.getWeekOfDate(date) == "日")
             return 0;
         else
             return 21;
     }
 
-    //todo：未验证
+    private boolean isWorked(String date) {
+        int year = Integer.valueOf(date.split("-")[0]);
+        int month = Integer.valueOf(date.split("-")[1]);
+        int day = Integer.valueOf(date.split("-")[2]);
+        String before = "";
+        String after = "";
+        if (day > 15) {
+            before = year + "-" + month + "-16";
+            month = month + 1;
+            after = year + "-" + month + "-15";
+        } else {
+            after = year + "-" + month + "-15";
+            month = month - 1;
+            before = year + "-" + month + "-16";
+        }
+
+        List<Holiday> holidays = holidayService.findByDate(before, after);
+        if (holidays.size() < 1)
+            return false;
+        else {
+            for (Holiday h : holidays) {
+                String str = h.getWorkDate().replace("，", ",");
+                if (!str.contains(",")) {
+                    if (date.equals(str))
+                        return true;
+                } else {
+                    String[] strs = h.getWorkDate().split(",");
+                    for (String s : strs)
+                        if (date.equals(str))
+                            return true;
+                }
+            }
+        }
+        return false;
+    }
+
     private boolean isHoliday(String date) {
         int year = Integer.valueOf(date.split("-")[0]);
         int month = Integer.valueOf(date.split("-")[1]);
@@ -416,9 +453,8 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
                 int d = Integer.valueOf(hd.split("-")[2]);
                 String ym = hd.split("-")[0] + "-" + hd.split("-")[1] + "-";
                 for (int i = 0; i < num; i++) {
-                    d = d + i;
-
                     days[i] = d < 10 ? ym + "0" + d : ym + d;
+                    d = d + 1;
                 }
                 //判断日期是否在范围内
                 for (String str : days) {
