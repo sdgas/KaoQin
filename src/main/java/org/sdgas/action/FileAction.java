@@ -56,7 +56,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     Administrators user = (Administrators) session.getAttribute("person");
     String ip = (String) session.getAttribute("ip");
 
-    //导入信息
+    //导入节假日信息
     public String recoverExcelByHoliday() {
         count = 0;
         num = 0;
@@ -73,6 +73,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
                     holiday.setLongtime(h.getLongtime());
                     holiday.setHolidayBeginDate(h.getHolidayBeginDate());
                     holiday.setHoliday(h.getHoliday());
+                    holiday.setWorkDate(h.getWorkDate());
                     holidayService.save(holiday);
                     logger.info(user.getUserId() + ",导入节假日(" + holiday.getHolidayName() + ") IP:" + ip);
                     ++count;
@@ -81,6 +82,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
                     holiday.setHolidayName(h.getHolidayName());
                     holiday.setLongtime(h.getLongtime());
                     holiday.setHolidayBeginDate(h.getHolidayBeginDate());
+                    holiday.setWorkDate(h.getWorkDate());
                     holidayService.update(holiday);
                     ++num;
                     logger.info(user.getUserId() + ",修改节假日(" + holiday.getHolidayName() + ") IP:" + ip);
@@ -97,7 +99,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     }
 
 
-    //导入信息
+    //导入排班信息
     public String recoverExcelByScheduleInfo() {
         count = 0;
         num = 0;
@@ -320,9 +322,8 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
     }
 
     private ScheduleInfo createS(int user, int dep, int year, int month) {
-        int days = WebTool.calDayByYearAndMonth(String.valueOf(year), String.valueOf(month-1));
+        int days = WebTool.calDayByYearAndMonth(String.valueOf(year), String.valueOf(month - 1));
         ScheduleInfo scheduleInfo = new ScheduleInfo();
-
 
         scheduleInfo.set_1st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-01"));
         scheduleInfo.set_2nd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-02"));
@@ -368,9 +369,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
             scheduleInfo.set_31st(0);
         } else if (30 == days)
             scheduleInfo.set_31st(0);
-        //String before = year + "-" + (month > 10 ? month : "0" + month) + "-16";
         month = month + 1;
-       // String after = year + "-" + (month > 10 ? month : "0" + month) + "-15";
 
         scheduleInfo.setDepId(dep);
         scheduleInfo.setUserinfo(user);
@@ -378,11 +377,57 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
         return scheduleInfo;
     }
 
+    //针对办公室人员的排班
     private int getPeriodId(String date) {
-        if (WebTool.getWeekOfDate(date) == "六" || WebTool.getWeekOfDate(date) == "日")
+
+        if (isHoliday(date))
+            return 0;
+        else if (WebTool.getWeekOfDate(date) == "六" || WebTool.getWeekOfDate(date) == "日")
             return 0;
         else
             return 21;
+    }
+
+    //todo：未验证
+    private boolean isHoliday(String date) {
+        int year = Integer.valueOf(date.split("-")[0]);
+        int month = Integer.valueOf(date.split("-")[1]);
+        int day = Integer.valueOf(date.split("-")[2]);
+        String before = "";
+        String after = "";
+        if (day > 15) {
+            before = year + "-" + month + "-16";
+            month = month + 1;
+            after = year + "-" + month + "-15";
+        } else {
+            after = year + "-" + month + "-15";
+            month = month - 1;
+            before = year + "-" + month + "-16";
+        }
+
+        List<Holiday> holidays = holidayService.findByDate(before, after);
+        if (holidays.size() < 1)
+            return false;
+        else {
+            for (Holiday h : holidays) {
+                String hd = ChangeTime.formatRealDate(h.getHolidayBeginDate());
+                int num = h.getLongtime();
+                String[] days = new String[num];
+                int d = Integer.valueOf(hd.split("-")[2]);
+                String ym = hd.split("-")[0] + "-" + hd.split("-")[1] + "-";
+                for (int i = 0; i < num; i++) {
+                    d = d + i;
+
+                    days[i] = d < 10 ? ym + "0" + d : ym + d;
+                }
+                //判断日期是否在范围内
+                for (String str : days) {
+                    if (date.trim().equals(str))
+                        return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Resource(name = "holidayServiceImpl")

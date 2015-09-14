@@ -226,7 +226,7 @@ public class ExcelUtil {
         Collections.sort(headers);
 
         //合并单元格
-        sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 0, (short) (headers.size() + 5)));
+        sheet.addMergedRegion(new CellRangeAddress(0, (short) 0, 0, (short) (headers.size() + 8)));
         Row r0 = sheet.createRow(count);
         Cell cell = r0.createCell(0);
         r0.setHeightInPoints(28);
@@ -321,10 +321,9 @@ public class ExcelUtil {
         cs.setBorderRight((short) 1);
         c.setCellStyle(cs);
         c.setCellValue("合计");
-        sheet.addMergedRegion(new CellRangeAddress(1, (short) 1, i + 1, (short) i + 5));
+        sheet.addMergedRegion(new CellRangeAddress(1, (short) 1, i + 1, (short) i + 8));
 
-        String type[] = {"病假天数", "事假天数", "加班时数", "补休小时", "出勤天数"};
-        //String type[] = {"病假天数", "事假天数", "补休小时", "平时加班", "周末加班", "假日加班", "出勤天数"};
+        String type[] = {"病假天数", "事假天数", "年假天数", "平时加班", "周末加班", "假日加班", "补休小时", "出勤天数"};
         for (String tep : type) {
             c = sheet.getRow(count).createCell(++i);
             c.setCellStyle(cs);
@@ -394,23 +393,40 @@ public class ExcelUtil {
             c.setCellFormula(exp);
             sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 3, (short) (monthDays + 3)));//事假天数
 
-
             c = sheet.getRow(count - 3).createCell(monthDays + 4);
+            c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
+            if (monthDays == 28)
+                exp = "COUNTIF(C" + sick + ":AD" + (sick + 1) + ",\"A\")/2";
+            else if (monthDays == 29)
+                exp = "COUNTIF(C" + sick + ":AE" + (sick + 1) + ",\"A\")/2";
+            else if (monthDays == 30)
+                exp = "COUNTIF(C" + sick + ":AF" + (sick + 1) + ",\"A\")/2";
+            else if (monthDays == 31)
+                exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"A\")/2";
+            c.setCellFormula(exp);
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 4, (short) (monthDays + 4)));//年假天数
+
+            /*todo:各类型加班*/
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 5, (short) (monthDays + 5)));//平时加班
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 6, (short) (monthDays + 6)));//周末加班
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 7, (short) (monthDays + 7)));//假日加班
+
+            c = sheet.getRow(count - 3).createCell(monthDays + 8);
             c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 
             if (monthDays == 28)
-                exp = "SUM(B" + count + ":AD" + count + ")";
+                exp = "SUM(B" + (count + 1) + ":AD" + (count + 1) + ")";
             else if (monthDays == 29)
-                exp = "SUM(B" + count + ":AE" + count + ")";
+                exp = "SUM(B" + (count + 1) + ":AE" + (count + 1) + ")";
             else if (monthDays == 30)
-                exp = "SUM(B" + count + ":AG" + count + ")";
+                exp = "SUM(B" + (count + 1) + ":AG" + (count + 1) + ")";
             else if (monthDays == 31)
-                exp = "SUM(B" + count + ":AG" + count + ")";
+                exp = "SUM(B" + (count + 1) + ":AG" + (count + 1) + ")";
             c.setCellFormula(exp);
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 4, (short) (monthDays + 4)));//补休小时
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 8, (short) (monthDays + 8)));//补休小时
 
 
-            c = sheet.getRow(count - 3).createCell(monthDays + 5);
+            /*c = sheet.getRow(count - 3).createCell(monthDays + 10);
             c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 
             if (monthDays == 28)
@@ -422,10 +438,10 @@ public class ExcelUtil {
             else if (monthDays == 31)
                 exp = "SUM(B" + (count + 1) + ":AG" + (count + 1) + ")";
             c.setCellFormula(exp);
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 5, (short) (monthDays + 5)));//加班小时
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 10, (short) (monthDays + 10)));//加班小时*/
 
 
-            c = sheet.getRow(count - 3).createCell(monthDays + 6);
+            c = sheet.getRow(count - 3).createCell(monthDays + 9);
             c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
 
             if (monthDays == 28)
@@ -437,8 +453,8 @@ public class ExcelUtil {
             else if (monthDays == 31)
                 exp = "COUNTIF(C" + sick + ":AG" + (sick + 1) + ",\"√\")/2";
             c.setCellFormula(exp);
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 6, (short) (monthDays + 6)));//出勤天数
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 7, (short) (monthDays + 7)));//签名确认
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 9, (short) (monthDays + 9)));//出勤天数
+            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 10, (short) (monthDays + 10)));//签名确认
             sick += 4;
             int d = 16;
             --month;
@@ -945,7 +961,9 @@ public class ExcelUtil {
                         int ci = c.getColumnIndex();
                         String mn = maps.get(ci).substring(3);  //消除get
                         mn = mn.substring(0, 1).toLowerCase() + mn.substring(1);
-                        if (this.getCellValue(c).matches("\\d{4}-\\d{2}-\\d{2}"))
+                        if ("workDate".equals(mn))
+                            BeanUtils.copyProperty(obj, mn, this.getCellValue(c));
+                        else if (this.getCellValue(c).matches("\\d{4}-\\d{2}-\\d{2}"))
                             BeanUtils.copyProperty(obj, mn, ChangeTime.parseStringToShortDate(this.getCellValue(c)));
                         else
                             BeanUtils.copyProperty(obj, mn, this.getCellValue(c));

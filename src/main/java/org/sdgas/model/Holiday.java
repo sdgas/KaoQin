@@ -3,6 +3,7 @@ package org.sdgas.model;
 
 import org.sdgas.util.ExcelResources;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -39,6 +40,11 @@ public class Holiday {
      * 放假天数
      */
     private int longtime;
+
+    /**
+     * 补上班
+     */
+    private String workDate;
 
     @Id
     @GeneratedValue
@@ -84,5 +90,15 @@ public class Holiday {
 
     public void setHoliday(Date holiday) {
         this.holiday = holiday;
+    }
+
+    @Column(length = 50)
+    @ExcelResources(title = "补班日期",order = 5)
+    public String getWorkDate() {
+        return workDate;
+    }
+
+    public void setWorkDate(String workDate) {
+        this.workDate = workDate;
     }
 }
