@@ -691,22 +691,61 @@ public class ExcelUtil {
                         boolean f = false;
                         for (Holiday holiday : holidays) {
                             String hd = ChangeTime.formatRealDate(holiday.getHoliday());
-                            if (today.equals(hd)) {
+                            if ("国庆".equals(holiday.getHolidayName()) || "春节".equals(holiday.getHolidayName())) {
+
+                                String[] days = new String[3];
+                                int d = Integer.valueOf(hd.split("-")[2]);
+                                String ym = hd.split("-")[0] + "-" + hd.split("-")[1] + "-";
+                                for (int i = 0; i < 3; i++) {
+                                    days[i] = d < 10 ? ym + "0" + d : ym + d;
+                                    d = d + 1;
+                                }
+                                for (String s : days) {
+                                    if (today.equals(s)) {
+                                        jiari = jiari + ot.getLongTime();
+                                        f = true;
+                                        break;
+                                    }
+                                }
+                            } else if (hd.equals("2015-09-03")) {
+                                zhoumo = zhoumo + ot.getLongTime();
+                                f = true;
+                            } else if (today.equals(hd)) {
                                 jiari = jiari + ot.getLongTime();
                                 f = true;
                             }
                         }
-                        if(!f)
+                        if (!f)
                             pingshi = pingshi + ot.getLongTime();
                     }
-
                 } else {
                     if (holidays.size() < 1) {
                         zhoumo = zhoumo + ot.getLongTime();
                     } else {
                         for (Holiday holiday : holidays) {
                             String hd = ChangeTime.formatRealDate(holiday.getHoliday());
-                            if (today.equals(hd))
+                            if ("国庆".equals(holiday.getHolidayName()) || "春节".equals(holiday.getHolidayName())) {
+
+                                String[] days = new String[3];
+                                int d = Integer.valueOf(hd.split("-")[2]);
+                                String ym = hd.split("-")[0] + "-" + hd.split("-")[1] + "-";
+                                for (int i = 0; i < 3; i++) {
+                                    days[i] = d < 10 ? ym + "0" + d : ym + d;
+                                    d = d + 1;
+                                }
+
+                                boolean f2 = false;
+                                for (String s : days) {
+                                    if (today.equals(s)) {
+                                        jiari = jiari + ot.getLongTime();
+                                        f2 = true;
+                                        break;
+                                    }
+                                }
+                                if (!f2)
+                                    zhoumo = zhoumo + ot.getLongTime();
+
+                            } else if (today.equals(hd) && !hd.equals("2015-09-03"))
                                 jiari = jiari + ot.getLongTime();
                             else
                                 zhoumo = zhoumo + ot.getLongTime();
@@ -717,7 +756,24 @@ public class ExcelUtil {
         } else {
             for (Holiday holiday : holidays) {
                 String hd = ChangeTime.formatRealDate(holiday.getHoliday());
-                if (today.equals(hd))
+                if (today.equals(hd) & hd.equals("2015-09-03"))
+                    zhoumo = zhoumo + 7;
+                else if ("国庆".equals(holiday.getHolidayName()) || "春节".equals(holiday.getHolidayName())) {
+
+                    String[] days = new String[3];
+                    int d = Integer.valueOf(hd.split("-")[2]);
+                    String ym = hd.split("-")[0] + "-" + hd.split("-")[1] + "-";
+                    for (int i = 0; i < 3; i++) {
+                        days[i] = d < 10 ? ym + "0" + d : ym + d;
+                        d = d + 1;
+                    }
+                    for (String s : days) {
+                        if (today.equals(s)) {
+                            jiari = jiari + 7;
+                            break;
+                        }
+                    }
+                } else if (today.equals(hd))
                     jiari = jiari + 7;
             }
         }
