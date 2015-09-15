@@ -216,6 +216,7 @@ public class ExcelUtil {
     private Workbook handleExcel(List objs, Class clz, boolean isXssf, String message, String dep) {
         XSSFWorkbook wb = new XSSFWorkbook();
         int count = 0;
+
         XSSFSheet sheet = wb.createSheet("考勤月报表");   //取excel工作表对象
 
         XSSFPrintSetup ps = sheet.getPrintSetup();
@@ -406,7 +407,7 @@ public class ExcelUtil {
             c.setCellFormula(exp);
             sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 4, (short) (monthDays + 4)));//年假天数
 
-            /*todo:各类型加班*/
+            /*各类型加班*/
             sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 5, (short) (monthDays + 5)));//平时加班
             sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 6, (short) (monthDays + 6)));//周末加班
             sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 7, (short) (monthDays + 7)));//假日加班
@@ -424,22 +425,6 @@ public class ExcelUtil {
                 exp = "SUM(B" + (count + 1) + ":AG" + (count + 1) + ")";
             c.setCellFormula(exp);
             sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 8, (short) (monthDays + 8)));//补休小时
-
-
-            /*c = sheet.getRow(count - 3).createCell(monthDays + 10);
-            c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
-
-            if (monthDays == 28)
-                exp = "SUM(B" + (count + 1) + ":AD" + (count + 1) + ")";
-            else if (monthDays == 29)
-                exp = "SUM(B" + (count + 1) + ":AE" + (count + 1) + ")";
-            else if (monthDays == 30)
-                exp = "SUM(B" + (count + 1) + ":AF" + (count + 1) + ")";
-            else if (monthDays == 31)
-                exp = "SUM(B" + (count + 1) + ":AG" + (count + 1) + ")";
-            c.setCellFormula(exp);
-            sheet.addMergedRegion(new CellRangeAddress(count - 3, (short) count, monthDays + 10, (short) (monthDays + 10)));//加班小时*/
-
 
             c = sheet.getRow(count - 3).createCell(monthDays + 9);
             c.setCellType(XSSFCell.CELL_TYPE_FORMULA);
@@ -463,6 +448,11 @@ public class ExcelUtil {
             String after = year + "-" + (month + 1) + "-15";
             List<Holiday> holidays = holidayService.findByDate(before, after); //考勤月的节假日
             int num = 2;//单元格数目
+
+            double pingshi = 0;//平时加班
+            double zhoumo = 0;//周末加班
+            double jiari = 0;//节假日加班
+
             for (int j = 0; j < monthDays; j++) {
 
                 Period period = periodService.find(Period.class, sc[j]); //当日排班情况
@@ -472,29 +462,37 @@ public class ExcelUtil {
                 List<Overtime> overtime = overTimeService.findByUserAndDate(userinfo.getUSERID(), day); //当日加班情况
                 List<VacationInfo> vacationInfos = vacationInfoService.findByUserAndDate(userinfo.getUSERID(), day);  //当日休假情况
 
-                String msg[] = just(holidays, checkinouts, period, overtime, vacationInfos);
+                String msg[] = just(holidays, checkinouts, period, overtime, vacationInfos, day);
 
+                //上午
                 r = sheet.getRow(count - 3);
                 c = r.createCell(num);
                 c.setCellStyle(cs);
                 c.setCellValue(msg[0]);
 
+                //下午
                 r = sheet.getRow(count - 2);
                 c = r.createCell(num);
                 c.setCellStyle(cs);
                 c.setCellValue(msg[1]);
 
+                //加班时间
                 r = sheet.getRow(count - 1);
                 c = r.createCell(num);
                 c.setCellStyle(cs);
                 if (!msg[2].trim().isEmpty())
                     c.setCellValue(Double.valueOf(msg[2]));
 
+                //补休
                 r = sheet.getRow(count);
                 c = r.createCell(num);
                 c.setCellStyle(cs);
                 if (!msg[3].trim().isEmpty())
                     c.setCellValue(Double.valueOf(msg[3]));
+
+                pingshi = pingshi + Double.valueOf(msg[4]);
+                zhoumo = zhoumo + Double.valueOf(msg[5]);
+                jiari = jiari + Double.valueOf(msg[6]);
 
                 ++num;
                 int days = WebTool.calDayByYearAndMonth(year + "", month + "");
@@ -505,6 +503,27 @@ public class ExcelUtil {
                     month += 1;
                 } else d += 1;
             }
+
+            cs = wb.createCellStyle();
+            cs.setAlignment(XSSFCellStyle.ALIGN_CENTER);
+            cs.setAlignment(XSSFCellStyle.VERTICAL_CENTER);
+            cs.setBorderTop((short) 1);
+            cs.setBorderBottom((short) 1);
+            cs.setBorderLeft((short) 1);
+            cs.setBorderRight((short) 1);
+
+            r = sheet.getRow(count - 3);
+            c = r.createCell(monthDays + 5);
+            c.setCellStyle(cs);
+            c.setCellValue(pingshi);
+
+            c = r.createCell(monthDays + 6);
+            c.setCellStyle(cs);
+            c.setCellValue(zhoumo);
+
+            c = r.createCell(monthDays + 7);
+            c.setCellStyle(cs);
+            c.setCellValue(jiari);
         }
 
         r = sheet.createRow(count + 1);
@@ -542,15 +561,9 @@ public class ExcelUtil {
         return wb;
     }
 
-    private String[] just(List<Holiday> holidays, List<CHECKINOUT> checkinouts, Period period, List<Overtime> overtime, List<VacationInfo> vacationInfo) {
-        String msg[] = {"", "", "", ""};
-        if (overtime != null) {
-            double temp = 0;
-            for (Overtime ot : overtime) {
-                temp = temp + ot.getLongTime();
-            }
-            msg[2] = temp == 0 ? "" : String.valueOf(temp);
-        }
+    private String[] just(List<Holiday> holidays, List<CHECKINOUT> checkinouts, Period period, List<Overtime> overtime, List<VacationInfo> vacationInfo, String today) {
+        String msg[] = {"", "", "", "", "0", "0", "0"};//上午，下午，加班，补休，平时，周末，假日
+
         if (period == null) {
             if (overtime.size() == 0) {
                 return msg;
@@ -560,9 +573,18 @@ public class ExcelUtil {
                     temp = temp + ot.getLongTime();
                 }
                 msg[2] = temp == 0 ? "" : String.valueOf(temp);
-                return msg;
+                // return msg;
             }
         } else {
+
+            if (overtime != null) {
+                double temp = 0;
+                for (Overtime ot : overtime) {
+                    temp = temp + ot.getLongTime();
+                }
+                msg[2] = temp == 0 ? "" : String.valueOf(temp);
+            }
+
             int size = checkinouts.size();
             if (size > 0) {
                 //08:30~17:30
@@ -654,6 +676,55 @@ public class ExcelUtil {
                 }
             }
         }
+
+        double pingshi = 0;//平时加班
+        double zhoumo = 0;//周末加班
+        double jiari = 0;//节假日加班
+
+        if (overtime.size() >= 1) {
+
+            for (Overtime ot : overtime) {
+                if (period != null) {
+                    if (holidays.size() < 1)
+                        pingshi = pingshi + ot.getLongTime();
+                    else {
+                        boolean f = false;
+                        for (Holiday holiday : holidays) {
+                            String hd = ChangeTime.formatRealDate(holiday.getHoliday());
+                            if (today.equals(hd)) {
+                                jiari = jiari + ot.getLongTime();
+                                f = true;
+                            }
+                        }
+                        if(!f)
+                            pingshi = pingshi + ot.getLongTime();
+                    }
+
+                } else {
+                    if (holidays.size() < 1) {
+                        zhoumo = zhoumo + ot.getLongTime();
+                    } else {
+                        for (Holiday holiday : holidays) {
+                            String hd = ChangeTime.formatRealDate(holiday.getHoliday());
+                            if (today.equals(hd))
+                                jiari = jiari + ot.getLongTime();
+                            else
+                                zhoumo = zhoumo + ot.getLongTime();
+                        }
+                    }
+                }
+            }
+        } else {
+            for (Holiday holiday : holidays) {
+                String hd = ChangeTime.formatRealDate(holiday.getHoliday());
+                if (today.equals(hd))
+                    jiari = jiari + 7;
+            }
+        }
+        msg[4] = String.valueOf(pingshi);
+        msg[5] = String.valueOf(zhoumo);
+        msg[6] = String.valueOf(jiari);
+
         return msg;
     }
 
