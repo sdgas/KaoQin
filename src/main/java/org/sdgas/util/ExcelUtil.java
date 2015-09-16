@@ -620,16 +620,16 @@ public class ExcelUtil {
                 } else {
                     for (CHECKINOUT checkinout : checkinouts) {
                         String date = ChangeTime.formatWholeDate(checkinout.getCHECKTIME()).substring(11, 19);
-                        if (date.compareToIgnoreCase(periodCome) <= 0 && date.compareToIgnoreCase(periodGo) < 0) {
+                        if (date.compareToIgnoreCase(periodCome) < 0 && date.compareToIgnoreCase(periodGo) < 0) {
                             msg[0] = msg[0] == "" || msg[0] == "F" ? "√" : msg[0];
                             msg[1] = msg[1] == "" || msg[1] == "F" ? "F" : msg[1];
-                        } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) >= 0) {
-                            msg[1] = msg[1] == "" || msg[1] == "F" ? "√" : msg[1];
-                            msg[0] = msg[0] == "" || msg[0] == "F" ? "F" : msg[0];
-                        } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) < 0) {
+                        } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) > 0) {
+                            msg[1] = msg[1] == "" || msg[1] == "F" ? "F" : msg[1];
+                            msg[0] = msg[0] == "" || msg[0] == "F" ? "√" : msg[0];
+                        } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) < 0 && date.compareToIgnoreCase("12:00") < 0) {
                             msg[0] = msg[0] == "" || msg[0] == "F" ? "★" : msg[0];
                             msg[1] = msg[1] == "" || msg[1] == "F" ? "F" : msg[1];
-                        } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) < 0) {
+                        } else if (date.compareToIgnoreCase(periodCome) > 0 && date.compareToIgnoreCase(periodGo) < 0 && date.compareToIgnoreCase("12:00") > 0) {
                             msg[0] = msg[0] == "" || msg[0] == "F" ? "F" : msg[0];
                             msg[1] = msg[1] == "" || msg[1] == "F" ? "▲" : msg[1];
                         } else {
@@ -665,12 +665,24 @@ public class ExcelUtil {
                                 msg[0] = v.getVacationSymbol();
                             else
                                 msg[1] = v.getVacationSymbol();
+                        } else if (1.5 == v.getLongTime()) {
+                            String temp = v.getRemarks().split(";")[0];
+                            if (temp.contains("上午"))
+                                msg[0] = v.getVacationSymbol();
+                            else
+                                msg[1] = v.getVacationSymbol();
+                            String one = v.getRemarks().split(";")[0].split(",")[0];
+                            String two = v.getRemarks().split(";")[1].split(",")[0];
+                            if (today.compareToIgnoreCase(two) == 0 && v.getRemarks().split(";")[1].contains("下午")) {
+                                msg[0] = v.getVacationSymbol();
+                                msg[1] = v.getVacationSymbol();
+                            }
                         } else {
                             msg[0] = v.getVacationSymbol();
                             msg[1] = v.getVacationSymbol();
                         }
                         if ("G".equals(v.getVacationSymbol())) {
-                            msg[3] = String.valueOf(v.getLongTime() * 7);
+                            msg[3] = String.valueOf(v.getLongTime() * 8);
                         }
                     }
                 }
@@ -707,7 +719,7 @@ public class ExcelUtil {
                                         break;
                                     }
                                 }
-                            } else if (hd.equals("2015-09-03")) {
+                            } else if (hd.equals("2015-09-03") && today.equals(hd)) {
                                 zhoumo = zhoumo + ot.getLongTime();
                                 f = true;
                             } else if (today.equals(hd)) {
