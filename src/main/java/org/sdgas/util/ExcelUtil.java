@@ -126,7 +126,7 @@ public class ExcelUtil {
         cell.setCellStyle(cellStyle);
 
         int depId = departmentService.findByDepName(dep).getDEPTID();
-        String date = month >= 10 ? year + "" + month : year + "0" + month;
+        String date = month > 9 ? year + "" + month : year + "0" + month;
         List<ScheduleInfo> scheduleInfos = scheduleInfoService.findByDepAndDate(depId, date);
 
         CellStyle cs = wb.createCellStyle();
@@ -456,9 +456,9 @@ public class ExcelUtil {
             for (int j = 0; j < monthDays; j++) {
 
                 Period period = periodService.find(Period.class, sc[j]); //当日排班情况
-                String day = month > 10 ? year + "-" + month : year + "-0" + month;
+                String day = month > 9 ? year + "-" + month : year + "-0" + month;
                 List<CHECKINOUT> checkinouts = checkInOutService.findByUserAndDate(userinfo.getUSERID(), day, d);  //当日打卡情况
-                day = d >= 10 ? day + "-" + d : day + "-0" + d;
+                day = d > 9 ? day + "-" + d : day + "-0" + d;
                 List<Overtime> overtime = overTimeService.findByUserAndDate(userinfo.getUSERID(), day); //当日加班情况
                 List<VacationInfo> vacationInfos = vacationInfoService.findByUserAndDate(userinfo.getUSERID(), day);  //当日休假情况
 

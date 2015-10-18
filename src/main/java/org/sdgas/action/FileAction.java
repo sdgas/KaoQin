@@ -292,7 +292,7 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
 
         Report report = new Report();
         report.setFilePath(fileName);
-        report.setReportDate(year + "" + (month > 10 ? month : "0" + month));
+        report.setReportDate(year + "" + (month > 9 ? month : "0" + month));
         report.setDep(depId);
         reportService.save(report);
 
@@ -325,40 +325,40 @@ public class FileAction extends MyActionSupport implements ModelDriven<FileVO> {
         int days = WebTool.calDayByYearAndMonth(String.valueOf(year), String.valueOf(month - 1));
         ScheduleInfo scheduleInfo = new ScheduleInfo();
 
-        scheduleInfo.set_1st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-01"));
-        scheduleInfo.set_2nd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-02"));
-        scheduleInfo.set_3rd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-03"));
-        scheduleInfo.set_4th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-04"));
-        scheduleInfo.set_5th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-05"));
-        scheduleInfo.set_6th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-06"));
-        scheduleInfo.set_7th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-07"));
-        scheduleInfo.set_8th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-08"));
-        scheduleInfo.set_9th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-09"));
-        scheduleInfo.set_10th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-10"));
-        scheduleInfo.set_11st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-11"));
-        scheduleInfo.set_12nd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-12"));
-        scheduleInfo.set_13rd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-13"));
-        scheduleInfo.set_14th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-14"));
-        scheduleInfo.set_15th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-15"));
+        scheduleInfo.set_1st(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-01"));
+        scheduleInfo.set_2nd(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-02"));
+        scheduleInfo.set_3rd(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-03"));
+        scheduleInfo.set_4th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-04"));
+        scheduleInfo.set_5th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-05"));
+        scheduleInfo.set_6th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-06"));
+        scheduleInfo.set_7th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-07"));
+        scheduleInfo.set_8th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-08"));
+        scheduleInfo.set_9th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-09"));
+        scheduleInfo.set_10th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-10"));
+        scheduleInfo.set_11st(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-11"));
+        scheduleInfo.set_12nd(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-12"));
+        scheduleInfo.set_13rd(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-13"));
+        scheduleInfo.set_14th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-14"));
+        scheduleInfo.set_15th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-15"));
 
         month = month - 1;
-        scheduleInfo.set_16th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-16"));
-        scheduleInfo.set_17th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-17"));
-        scheduleInfo.set_18th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-18"));
-        scheduleInfo.set_19th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-19"));
-        scheduleInfo.set_20th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-20"));
+        scheduleInfo.set_16th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-16"));
+        scheduleInfo.set_17th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-17"));
+        scheduleInfo.set_18th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-18"));
+        scheduleInfo.set_19th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-19"));
+        scheduleInfo.set_20th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-20"));
 
-        scheduleInfo.set_21st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-21"));
-        scheduleInfo.set_22nd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-22"));
-        scheduleInfo.set_23rd(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-23"));
-        scheduleInfo.set_24th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-24"));
-        scheduleInfo.set_25th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-25"));
-        scheduleInfo.set_26th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-26"));
-        scheduleInfo.set_27th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-27"));
-        scheduleInfo.set_28th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-28"));
-        scheduleInfo.set_29th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-29"));
-        scheduleInfo.set_30th(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-30"));
-        scheduleInfo.set_31st(getPeriodId(year + "-" + (month > 10 ? month : "0" + month) + "-31"));
+        scheduleInfo.set_21st(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-21"));
+        scheduleInfo.set_22nd(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-22"));
+        scheduleInfo.set_23rd(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-23"));
+        scheduleInfo.set_24th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-24"));
+        scheduleInfo.set_25th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-25"));
+        scheduleInfo.set_26th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-26"));
+        scheduleInfo.set_27th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-27"));
+        scheduleInfo.set_28th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-28"));
+        scheduleInfo.set_29th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-29"));
+        scheduleInfo.set_30th(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-30"));
+        scheduleInfo.set_31st(getPeriodId(year + "-" + (month > 9 ? month : "0" + month) + "-31"));
 
         if (28 == days) {
             scheduleInfo.set_29th(0);
