@@ -62,10 +62,16 @@ public class CheckInOutAction extends MyActionSupport implements ModelDriven<Che
 
         String tem = checkInOutVO.getMonth().substring(5, 7);
         int month = Integer.valueOf(tem) - 1;
-        String before = checkInOutVO.getMonth().substring(0, 4) + "-" + month + "-16";
+        String before;
         String after = checkInOutVO.getMonth().replace("年", "-").replace("月", "-") + "15";
+        if (month == 0) {
+            int year = Integer.valueOf(checkInOutVO.getMonth().substring(0, 4)) - 1;
+            before = year + "-12-16";
+        } else {
+            before = checkInOutVO.getMonth().substring(0, 4) + "-" + month + "-16";
+        }
 
-        jpql.append(" AND CHECKTIME>'" + before + " 00:00:00' AND CHECKTIME<'" + after + " 00:00:00'");
+        jpql.append(" AND CHECKTIME>'" + before + " 00:00:00' AND CHECKTIME<'" + after + " 23:59:59'");
         checkInOutVO.setMonth(checkInOutVO.getMonth());
 
         /** 列表条件的值 **/
